@@ -1,0 +1,1339 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PortfolioIQ — Technology Portfolio Rationalization</title>
+<style>/*__FONTS__*/</style>
+<style>
+:root{
+  --navy:#09375F; --navy-2:#0f4d80; --verdigris:#44B0B1; --onyx:#404040;
+  --tint:#EAF4F4; --border:#d7e2e6; --muted:#6b8296;
+  --good:#0F6E56; --warn:#BA7517; --bad:#993C1D; --white:#fff;
+  --invest:#0F6E56; --consolidate:#44B0B1; --replace:#BA7517; --retire:#993C1D;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Poppins',-apple-system,'Segoe UI',sans-serif;font-size:13px;color:var(--onyx);background:#f4f7f8;-webkit-font-smoothing:antialiased}
+.app{display:flex;min-height:100vh}
+
+/* ---------- left rail ---------- */
+.rail{width:212px;flex:0 0 212px;background:var(--navy);color:#c5d6e3;padding:14px 0 40px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.brand{padding:0 16px 14px;border-bottom:1px solid rgba(255,255,255,.14);margin-bottom:6px}
+.brand b{display:block;color:#fff;font-size:17px;font-weight:500;letter-spacing:.2px}
+.brand span{color:var(--verdigris);font-size:11px}
+.grp{padding:14px 16px 5px;font-size:10px;letter-spacing:.9px;color:#7fa3c0}
+.nav{display:flex;align-items:center;gap:9px;padding:8px 16px;font-size:12.5px;cursor:pointer;border-left:3px solid transparent;user-select:none}
+.nav:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav.on{background:rgba(68,176,177,.18);border-left-color:var(--verdigris);color:#fff}
+.nav i{width:15px;text-align:center;font-style:normal;opacity:.85}
+.railfoot{padding:16px;font-size:10.5px;color:#7fa3c0;line-height:1.6}
+
+/* ---------- main ---------- */
+.main{flex:1;min-width:0}
+.top{background:#fff;border-bottom:1px solid var(--border);padding:10px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+.crumb{font-size:11.5px;color:var(--muted)}
+.chips{display:flex;gap:7px;align-items:center}
+.chip{font-size:11px;color:var(--navy);border:1px solid var(--border);border-radius:4px;padding:4px 9px;background:#fff}
+.chip.act{background:var(--navy);color:#fff;border-color:var(--navy);cursor:pointer}
+.wrap{padding:18px 22px 60px}
+h1{font-size:19px;font-weight:500;color:var(--navy);margin:0 0 3px}
+.sub{font-size:12px;color:var(--muted);margin:0 0 16px;max-width:900px;line-height:1.6}
+h2{font-size:13.5px;font-weight:500;color:var(--navy);margin:0 0 9px}
+
+/* ---------- primitives ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:11px;margin-bottom:16px}
+.kpi{background:var(--tint);border-radius:7px;padding:11px 13px}
+.kpi .l{font-size:10.5px;color:var(--navy);opacity:.8}
+.kpi .v{font-size:22px;font-weight:500;color:var(--navy);line-height:1.25}
+.kpi .d{font-size:10.5px;color:var(--muted);margin-top:1px}
+.card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:13px 15px;margin-bottom:14px}
+.row{display:grid;gap:14px;margin-bottom:14px}
+.r2{grid-template-columns:1fr 1fr}.r3{grid-template-columns:1fr 1fr 1fr}.r21{grid-template-columns:2fr 1fr}.r12{grid-template-columns:1fr 2fr}
+@media(max-width:1100px){.r2,.r3,.r21,.r12{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+th{text-align:left;font-weight:500;color:var(--muted);border-bottom:1px solid var(--border);padding:6px 8px;font-size:10.5px;letter-spacing:.3px;white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--navy)}
+td{padding:6px 8px;border-bottom:1px solid #eef3f5;vertical-align:middle}
+tr.clk{cursor:pointer}
+tr.clk:hover td{background:#f7fbfb}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;white-space:nowrap;font-weight:500}
+.p-Invest{background:#E1F5EE;color:var(--invest)}
+.p-Consolidate{background:#dff1f1;color:#0b6a6b}
+.p-Replace{background:#FAEEDA;color:#854F0B}
+.p-Retire{background:#FAECE7;color:var(--retire)}
+.tag{display:inline-block;font-size:10px;padding:1px 6px;border-radius:3px;background:#eef3f5;color:var(--muted);margin:1px 3px 1px 0}
+.bar{height:7px;background:#eef3f5;border-radius:4px;overflow:hidden;min-width:44px}
+.bar>i{display:block;height:100%;background:var(--verdigris)}
+.mini{font-size:10.5px;color:var(--muted)}
+.warnbox{background:#FAECE7;border-left:3px solid var(--bad);padding:9px 12px;font-size:11.5px;color:#5c2410;margin-bottom:14px}
+.okbox{background:#E1F5EE;border-left:3px solid var(--good);padding:9px 12px;font-size:11.5px;color:#0a4a3a;margin-bottom:14px}
+.infobox{background:var(--tint);border-left:3px solid var(--navy-2);padding:9px 12px;font-size:11.5px;color:#0b3a5e;margin-bottom:14px;line-height:1.6}
+button{font-family:inherit;font-size:11.5px;border:1px solid var(--border);background:#fff;border-radius:5px;padding:5px 11px;cursor:pointer;color:var(--navy)}
+button:hover{background:var(--tint)}
+button.pri{background:var(--navy);color:#fff;border-color:var(--navy)}
+button.pri:hover{background:var(--navy-2)}
+input[type=range]{width:100%;accent-color:var(--verdigris)}
+input[type=text],select{font-family:inherit;font-size:11.5px;padding:5px 8px;border:1px solid var(--border);border-radius:5px;color:var(--onyx);background:#fff}
+label.sl{display:block;font-size:11px;color:var(--muted);margin-bottom:3px}
+label.sl b{color:var(--navy);font-weight:500}
+.scroll{max-height:520px;overflow-y:auto}
+.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:10.5px;color:var(--muted);margin-top:7px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;font-style:normal}
+
+/* ---------- drawer ---------- */
+.scrim{position:fixed;inset:0;background:rgba(9,55,95,.35);z-index:40;display:none}
+.scrim.on{display:block}
+.drawer{position:fixed;top:0;right:0;width:520px;max-width:94vw;height:100vh;background:#fff;z-index:41;box-shadow:-2px 0 16px rgba(9,55,95,.18);transform:translateX(100%);transition:transform .18s ease;overflow-y:auto}
+.drawer.on{transform:none}
+.dhead{background:var(--navy);color:#fff;padding:15px 18px}
+.dhead b{font-size:15px;font-weight:500;display:block}
+.dhead span{font-size:11px;color:#a9c6dc}
+.dbody{padding:15px 18px}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:11.5px;margin-bottom:14px}
+.dl dt{color:var(--muted)}
+.dl dd{margin:0;text-align:right;color:var(--onyx)}
+.x{float:right;cursor:pointer;color:#a9c6dc;font-size:17px;line-height:1}
+.x:hover{color:#fff}
+.sec{font-size:11px;color:var(--navy);font-weight:500;border-bottom:1px solid var(--border);padding-bottom:4px;margin:15px 0 8px;letter-spacing:.3px}
+.why{font-size:11.5px;line-height:1.65;background:var(--tint);padding:9px 11px;border-radius:6px;color:#0b3a5e}
+.deps{font-size:11px;line-height:1.8}
+.deps a{color:var(--navy-2);cursor:pointer;text-decoration:none;border-bottom:1px dotted var(--navy-2)}
+</style>
+
+<div class="app">
+  <nav class="rail">
+    <div class="brand"><b>PortfolioIQ</b><span>Aberdeen Labs</span></div>
+    <div id="menu"></div>
+    <div class="railfoot" id="railfoot"></div>
+  </nav>
+  <div class="main">
+    <div class="top">
+      <span class="crumb" id="crumb"></span>
+      <span class="chips">
+        <span class="chip" id="chipScope"></span>
+        <span class="chip act" id="chipExport">Export actions (CSV)</span>
+      </span>
+    </div>
+    <div class="wrap" id="view"></div>
+  </div>
+</div>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer"></aside>
+
+<script>
+const RAW = /*__DATA__*/;
+
+/* ============================================================================
+   0. helpers
+   ========================================================================== */
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money = n => n >= 1e9 ? '$' + (n/1e9).toFixed(2) + 'B' : n >= 1e6 ? '$' + (n/1e6).toFixed(1) + 'M' : n >= 1e3 ? '$' + Math.round(n/1e3) + 'K' : '$' + Math.round(n);
+const money0 = n => '$' + Math.round(n).toLocaleString('en-US');
+const pct = n => Math.round(n * 100) + '%';
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const ASOF = new Date(RAW.asOf + 'T00:00:00');
+const DAY = 864e5;
+const addDays = (d, n) => new Date(d.getTime() + n * DAY);
+const fmtDate = d => d.toISOString().slice(0, 10);
+const monthsBetween = (a, b) => (b.getFullYear() - a.getFullYear()) * 12 + (b.getMonth() - a.getMonth());
+
+/* deterministic PRNG so every run of the engine is reproducible */
+function rngFrom(seedStr){
+  let h = 2166136261;
+  for (let i = 0; i < seedStr.length; i++){ h ^= seedStr.charCodeAt(i); h = Math.imul(h, 16777619); }
+  let s = h >>> 0;
+  return () => { s |= 0; s = s + 0x6D2B79F5 | 0;
+    let t = Math.imul(s ^ s >>> 15, 1 | s);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+}
+
+/* ============================================================================
+   1. Vendor intelligence pack
+   Curated capability + lifecycle knowledge for the vendors present in the
+   inventory. This is what lets the engine judge WHICH product should survive a
+   redundancy group rather than picking on price alone. In production this pack
+   is refreshed from vendor sources; here it ships embedded so the tool runs
+   fully offline.
+   ========================================================================== */
+const VENDORS = {
+  'Microsoft':   {life:'Stable', sec:1, strong:['Collaboration','Engineering','AI & Automation','Analytics & BI','Cybersecurity'], model:'OpenAI / in-house'},
+  'Google':      {life:'Stable', sec:1, strong:['Collaboration','Data Platform','Analytics & BI','AI & Automation'], model:'Google'},
+  'AWS':         {life:'Stable', sec:1, strong:['Data Platform','Engineering','IT Operations'], model:'Amazon / Anthropic'},
+  'Salesforce':  {life:'Stable', sec:1, strong:['CRM','Sales Enablement','Customer Service','Marketing'], model:'multi'},
+  'Oracle':      {life:'Stable', sec:2, strong:['ERP','Finance','Data Platform'], model:'multi'},
+  'SAP':         {life:'Stable', sec:2, strong:['ERP','Finance','Industry Operations'], model:'multi'},
+  'Workday':     {life:'Stable', sec:1, strong:['HR & Talent','Finance'], model:null},
+  'ServiceNow':  {life:'Growth', sec:1, strong:['IT Operations','Customer Service','Legal & Compliance'], model:'multi'},
+  'Atlassian':   {life:'Growth', sec:1, strong:['Engineering','IT Operations','Collaboration'], model:null},
+  'Adobe':       {life:'Stable', sec:1, strong:['Marketing','Sales Enablement'], model:'in-house'},
+  'HubSpot':     {life:'Stable', sec:1, strong:['Marketing','CRM'], model:null},
+  'Okta':        {life:'Stable', sec:2, strong:['Cybersecurity'], model:null},
+  'CrowdStrike': {life:'Growth', sec:0, strong:['Cybersecurity'], model:null},
+  'Cisco':       {life:'Stable', sec:2, strong:['IT Operations','Collaboration','Cybersecurity'], model:null},
+  'IBM':         {life:'Declining', sec:2, strong:['Industry Operations','Data Platform','Legal & Compliance'], model:'IBM / multi'},
+  'Slack':       {life:'Stable', sec:1, strong:['Collaboration'], model:null},
+  'Zoom':        {life:'Stable', sec:2, strong:['Collaboration'], model:'in-house'},
+  'Snowflake':   {life:'Growth', sec:0, strong:['Data Platform','Analytics & BI'], model:null},
+  'Databricks':  {life:'Growth', sec:1, strong:['Data Platform','AI & Automation','Analytics & BI'], model:'multi'},
+  'UiPath':      {life:'Declining', sec:2, strong:['AI & Automation','Industry Operations'], model:'multi'},
+  'OpenAI':      {life:'Growth', sec:2, strong:['AI & Automation'], model:'OpenAI'},
+  'Anthropic':   {life:'Growth', sec:0, strong:['AI & Automation','Engineering'], model:'Anthropic'},
+  'NicheSoft':   {life:'At Risk', sec:3, strong:[], model:null},
+  'Global Systems':{life:'At Risk', sec:3, strong:[], model:null},
+  'Internal IT': {life:'Key-Person Risk', sec:2, strong:[], model:null}
+};
+const LIFE_RISK = {'Growth':0,'Stable':6,'Declining':24,'Key-Person Risk':28,'At Risk':34};
+
+/* Category -> compliance + data sensitivity. Inferred, not asserted by the source file. */
+const CAT_PROFILE = {
+  'Finance':            {reg:'SOX',  data:'Restricted',   rev:true},
+  'ERP':                {reg:'SOX',  data:'Restricted',   rev:true},
+  'HR & Talent':        {reg:'GDPR', data:'Restricted',   rev:false},
+  'Legal & Compliance': {reg:'GDPR', data:'Restricted',   rev:false},
+  'Cybersecurity':      {reg:'SOX',  data:'Restricted',   rev:false},
+  'CRM':                {reg:'GDPR', data:'Confidential', rev:true},
+  'Sales Enablement':   {reg:'None', data:'Confidential', rev:true},
+  'Marketing':          {reg:'GDPR', data:'Confidential', rev:true},
+  'Customer Service':   {reg:'GDPR', data:'Confidential', rev:true},
+  'Data Platform':      {reg:'GDPR', data:'Restricted',   rev:false},
+  'Analytics & BI':     {reg:'None', data:'Confidential', rev:false},
+  'AI & Automation':    {reg:'None', data:'Confidential', rev:false},
+  'Engineering':        {reg:'None', data:'Internal',     rev:false},
+  'IT Operations':      {reg:'None', data:'Internal',     rev:false},
+  'Collaboration':      {reg:'None', data:'Internal',     rev:false},
+  'Industry Operations':{reg:'None', data:'Confidential', rev:true}
+};
+const DATA_RISK = {'Restricted':12,'Confidential':7,'Internal':3,'Public':0};
+
+/* Architecture layers. An application may only depend on a STRICTLY lower rank,
+   which guarantees the inferred graph is acyclic - without this, identity underpins
+   everything, everything underpins identity, and transitive blast radius degenerates
+   to "all 600 assets". Rank also encodes the real shape of an enterprise estate:
+   identity and infrastructure at the bottom, customer-facing systems at the edge. */
+const LAYER = {
+  'Cybersecurity':0, 'IT Operations':1, 'Data Platform':2,
+  'Collaboration':3, 'Engineering':3, 'ERP':4,
+  'AI & Automation':5, 'Analytics & BI':5,
+  'Finance':6, 'HR & Talent':6, 'Legal & Compliance':6, 'Industry Operations':6,
+  'CRM':7, 'Customer Service':8, 'Marketing':8, 'Sales Enablement':8
+};
+/* Preferred upstream categories - the couplings that genuinely exist. */
+const PREFERS = {
+  'CRM':['Cybersecurity','Data Platform','ERP','Collaboration'],
+  'Marketing':['Data Platform','CRM','Cybersecurity'],
+  'Sales Enablement':['CRM','ERP','Collaboration'],
+  'Customer Service':['CRM','Collaboration','Data Platform'],
+  'Finance':['ERP','Data Platform','Cybersecurity'],
+  'HR & Talent':['Collaboration','Cybersecurity','Data Platform'],
+  'Legal & Compliance':['Cybersecurity','Data Platform','ERP'],
+  'Industry Operations':['ERP','IT Operations','Data Platform'],
+  'Analytics & BI':['Data Platform','Cybersecurity'],
+  'AI & Automation':['Data Platform','Engineering','Collaboration'],
+  'ERP':['Cybersecurity','IT Operations','Data Platform'],
+  'Engineering':['IT Operations','Cybersecurity'],
+  'Collaboration':['Cybersecurity','IT Operations'],
+  'Data Platform':['Cybersecurity','IT Operations'],
+  'IT Operations':['Cybersecurity'],
+  'Cybersecurity':[]
+};
+const CRIT_RANK = {'Mission Critical':4,'High':3,'Medium':2,'Low':1};
+
+/* ============================================================================
+   2. ingest -> normalise
+   ========================================================================== */
+let ASSETS = [], BYID = {}, SOURCE = 'bundled sample (Hackathon Mock Data)';
+
+const ALIASES = {
+  id:['application id','asset id','id'],
+  name:['application name','asset name','name','application'],
+  type:['asset type','type'],
+  vendor:['vendor','supplier','publisher'],
+  category:['category','domain'],
+  cap:['business capability','capability'],
+  covered:['capabilities covered','covered capabilities'],
+  owner:['business owner','owner'],
+  dept:['dept owner','department','department owner'],
+  years:['contract duration in years','contract duration','term years'],
+  cost:['total annual cost','annual cost','annual spend'],
+  tcv:['total contract value','contract value','tcv'],
+  acq:['licenses acquired','licences acquired','licenses purchased','seats purchased'],
+  used:['licenses in use','licences in use','licenses assigned','seats assigned'],
+  act:['licenses in use ( last 90 days)','licenses in use (last 90 days)','active users 90d','active users'],
+  crit:['business criticality','criticality'],
+  cstart:['contract start date','contract start'],
+  cend:['contract end date','contract end','renewal date'],
+  auto:['auto renew','auto-renew','autorenew'],
+  notice:['notice period days','notice period']
+};
+
+function mapColumns(cols){
+  const low = cols.map(c => String(c).trim().toLowerCase());
+  const m = {};
+  for (const k in ALIASES) for (const a of ALIASES[k]){
+    const i = low.indexOf(a);
+    if (i > -1){ m[k] = i; break; }
+  }
+  return m;
+}
+
+function ingest(raw, label){
+  const m = mapColumns(raw.cols);
+  const missing = ['name','cost','crit'].filter(k => m[k] === undefined);
+  if (missing.length) throw new Error('Missing required column(s): ' + missing.join(', '));
+
+  ASSETS = raw.rows.map((r, i) => {
+    const g = k => m[k] === undefined ? '' : r[m[k]];
+    const n = k => { const v = parseFloat(g(k)); return isFinite(v) ? v : 0; };
+    const cat = String(g('category') || 'Unclassified');
+    const covered = String(g('covered') || g('cap') || '').split(';').map(s => s.trim()).filter(Boolean);
+    const years = n('years') || 3;
+    let cend = g('cend') ? new Date(g('cend') + 'T00:00:00') : addDays(ASOF, Math.round(years * 365 * 0.5));
+    if (isNaN(cend)) cend = addDays(ASOF, 365);
+    return {
+      idx: i,
+      id: String(g('id') || ('APP-' + String(i + 1).padStart(3, '0'))),
+      name: String(g('name')),
+      type: String(g('type') || 'Application'),
+      vendor: String(g('vendor') || 'Unknown'),
+      cat, covered,
+      owner: String(g('owner') || '—'),
+      dept: String(g('dept') || '—'),
+      years,
+      cost: n('cost'),
+      tcv: n('tcv'),
+      acq: n('acq'),
+      used: n('used'),
+      act: n('act'),
+      crit: String(g('crit') || 'Medium'),
+      cstart: g('cstart'),
+      cend,
+      auto: String(g('auto')).toUpperCase() === 'TRUE',
+      notice: n('notice') || 90
+    };
+  });
+  BYID = {}; ASSETS.forEach(a => BYID[a.id] = a);
+  SOURCE = label;
+  infer();
+}
+
+/* ============================================================================
+   3. INFERENCE ENGINE
+   The source inventory carries cost and usage only. Everything below - risk,
+   dependencies, compliance exposure, AI governance - is derived here at ingest
+   time, and every derived value keeps the evidence that produced it so the
+   recommendation can be defended line by line.
+   ========================================================================== */
+function infer(){
+  const totalSpend = ASSETS.reduce((s, a) => s + a.cost, 0);
+  const vendorSpend = {};
+  ASSETS.forEach(a => vendorSpend[a.vendor] = (vendorSpend[a.vendor] || 0) + a.cost);
+
+  /* ---- 3a. per-asset primitives ---------------------------------------- */
+  ASSETS.forEach(a => {
+    a.util      = a.acq > 0 ? clamp(a.act / a.acq, 0, 1) : (a.act > 0 ? 1 : 0);
+    a.assignUtil= a.acq > 0 ? clamp(a.used / a.acq, 0, 1) : 0;
+    a.decay     = a.used > 0 ? clamp((a.used - a.act) / a.used, 0, 1) : 0;   // assigned but gone quiet
+    a.unitCost  = a.acq > 0 ? a.cost / a.acq : 0;
+    a.idleSeats = Math.max(0, a.acq - a.act);
+    a.idleCost  = a.unitCost * a.idleSeats;
+    a.cpau      = a.act > 0 ? a.cost / a.act : a.cost;
+    a.critRank  = CRIT_RANK[a.crit] || 2;
+    a.isAI      = a.type === 'AI Tool' || a.type === 'AI Agent';
+
+    const prof   = CAT_PROFILE[a.cat] || {reg:'None', data:'Internal', rev:false};
+    a.reg        = prof.reg;
+    a.dataClass  = prof.data;
+    a.revenue    = prof.rev && a.critRank >= 3;
+
+    const v      = VENDORS[a.vendor] || {life:'Stable', sec:2, strong:[], model:null};
+    a.vLife      = v.life;
+    a.vFit       = v.strong.includes(a.cat);
+    a.modelHost  = v.model;
+    a.vShare     = vendorSpend[a.vendor] / totalSpend;
+
+    /* open security findings: inferred from vendor posture, data sensitivity and neglect */
+    const rr = rngFrom(a.id + '|sec');
+    a.findings = Math.max(0, Math.round(v.sec + (a.dataClass === 'Restricted' ? 1 : 0)
+                    + (a.decay > .5 ? 1 : 0) + (rr() < .18 ? 2 : 0) - (rr() < .3 ? 1 : 0)));
+
+    /* AI governance: an AI asset outside the AI category, or one nobody uses, reads as shadow */
+    if (a.isAI){
+      const rg = rngFrom(a.id + '|gov');
+      a.aiGov = a.cat !== 'AI & Automation' ? 'Shadow / Unsanctioned'
+              : a.util < .12 ? 'Shadow / Unsanctioned'
+              : rg() < .18 ? 'Under Review'
+              : rg() < .42 ? 'Pilot' : 'Approved';
+      a.aiEgress = a.dataClass !== 'Internal' && a.aiGov !== 'Approved';
+      a.aiModel = v.model || 'Undisclosed';
+    }
+
+    /* contract mechanics */
+    a.actionDate = addDays(a.cend, -a.notice);
+    a.daysToAction = Math.round((a.actionDate - ASOF) / DAY);
+    a.exitCost = a.cost * (a.critRank >= 3 ? 0.18 : 0.10);
+    a.migrationCost = Math.round(a.act * 95 + a.cost * 0.04);
+  });
+
+  /* ---- 3b. dependency graph -------------------------------------------- */
+  const byCat = {};
+  ASSETS.forEach(a => (byCat[a.cat] = byCat[a.cat] || []).push(a));
+  ASSETS.forEach(a => { a.dependsOn = []; a.usedBy = []; });
+
+  ASSETS.forEach(a => {
+    const rnd = rngFrom(a.id + '|dep');
+    const myLayer = LAYER[a.cat] === undefined ? 4 : LAYER[a.cat];
+    const upstreamCats = (PREFERS[a.cat] || []).filter(c => (LAYER[c] === undefined ? 4 : LAYER[c]) < myLayer);
+    const want = a.critRank >= 3 ? 2 + Math.floor(rnd() * 3) : 1 + Math.floor(rnd() * 2);
+    const picked = new Set();
+    for (const c of upstreamCats){
+      if (picked.size >= want) break;
+      const pool = (byCat[c] || [])
+        .filter(x => x.id !== a.id)
+        /* prefer the platform-grade, well-adopted, same-department option */
+        .map(x => ({x, s: x.critRank * 2 + (x.type === 'Platform' ? 3 : 0) + (x.dept === a.dept ? 2 : 0)
+                       + x.util * 2 + rnd() * 3}))
+        .sort((p, q) => q.s - p.s);
+      if (pool.length) picked.add(pool[0].x.id);
+    }
+    /* same-vendor platform coupling, still strictly down-layer */
+    if (rnd() < .3){
+      const sib = ASSETS.find(x => x.vendor === a.vendor && x.id !== a.id && x.critRank >= 3 &&
+                                   (LAYER[x.cat] === undefined ? 4 : LAYER[x.cat]) < myLayer);
+      if (sib) picked.add(sib.id);
+    }
+    a.dependsOn = [...picked];
+  });
+  ASSETS.forEach(a => a.dependsOn.forEach(id => BYID[id] && BYID[id].usedBy.push(a.id)));
+
+  /* transitive blast radius - who breaks if this goes away */
+  ASSETS.forEach(a => {
+    const seen = new Set(); const q = [...a.usedBy];
+    while (q.length){
+      const id = q.pop();
+      if (seen.has(id)) continue;
+      seen.add(id);
+      (BYID[id] ? BYID[id].usedBy : []).forEach(x => { if (!seen.has(x)) q.push(x); });
+    }
+    a.blast = seen.size;
+    a.blastCrit = [...seen].filter(id => BYID[id] && BYID[id].critRank >= 4).length;
+    a.integrations = a.dependsOn.length + a.usedBy.length;
+  });
+  const maxBlast = Math.max(1, ...ASSETS.map(a => a.blast));
+
+  /* ---- 3c. scores ------------------------------------------------------ */
+  const maxUsers = Math.max(1, ...ASSETS.map(a => a.act));
+  ASSETS.forEach(a => {
+    const adoption = a.util * 26;
+    const scale    = (Math.log10(1 + a.act) / Math.log10(1 + maxUsers)) * 16;
+    const crit     = {4:28, 3:20, 2:11, 1:4}[a.critRank] || 8;
+    const central  = (a.blast / maxBlast) * 18;
+    const fit      = a.vFit ? 8 : 0;
+    const rev      = a.revenue ? 6 : 0;
+    a.value = Math.round(clamp(adoption + scale + crit + central + fit + rev, 0, 100));
+    a.valueParts = {adoption, scale, crit, central, fit, rev};
+
+    const rLife  = LIFE_RISK[a.vLife] || 6;
+    const rSec   = Math.min(22, a.findings * 6);
+    const rData  = (DATA_RISK[a.dataClass] || 3) * (a.aiEgress ? 1.7 : 1);
+    const rGov   = a.isAI ? ({'Shadow / Unsanctioned':22,'Under Review':10,'Pilot':5,'Approved':0}[a.aiGov] || 0) : 0;
+    const rDecay = a.decay * 14;
+    const rConc  = a.vShare > .07 ? 6 : 0;
+    a.risk = Math.round(clamp(rLife + rSec + rData + rGov + rDecay + rConc, 0, 100));
+    a.riskParts = {rLife, rSec, rData, rGov, rDecay, rConc};
+
+    a.disruption = Math.round(clamp(
+      {4:38, 3:24, 2:12, 1:4}[a.critRank] +
+      (a.blast / maxBlast) * 28 + a.blastCrit * 3 +
+      (Math.log10(1 + a.act) / Math.log10(1 + maxUsers)) * 18 +
+      (a.reg !== 'None' ? 9 : 0) + (a.revenue ? 6 : 0), 0, 100));
+
+    /* hard guardrails - these can never be retired by the optimiser */
+    a.locked = a.critRank >= 4 || a.revenue || (a.reg !== 'None' && a.blastCrit > 0) || a.blast >= 12;
+    a.lockReasons = [
+      a.critRank >= 4 ? 'Mission Critical' : null,
+      a.revenue ? 'Supports revenue process' : null,
+      (a.reg !== 'None' && a.blastCrit > 0) ? ('In ' + a.reg + ' scope with critical dependants') : null,
+      a.blast >= 12 ? ('Blast radius ' + a.blast + ' applications') : null
+    ].filter(Boolean);
+  });
+
+  /* ---- 3d. redundancy groups ------------------------------------------- */
+  /* Group on the capabilities an application actually covers, not on Category. */
+  const groups = {};
+  ASSETS.forEach(a => {
+    const key = a.cat;
+    (groups[key] = groups[key] || {key, cat: a.cat, members: []}).members.push(a);
+  });
+  GROUPS = Object.values(groups).filter(g => g.members.length > 1);
+  GROUPS.forEach(g => {
+    /* survivor: real capability fit first, then value, risk and unit economics */
+    g.members.forEach(a => {
+      a.fitScore = a.value * 0.9 - a.risk * 0.7 + (a.vFit ? 22 : 0)
+                 + a.covered.length * 3 - (a.cpau > 4000 ? 8 : 0);
+    });
+    g.members.sort((x, y) => y.fitScore - x.fitScore);
+    g.survivor = g.members[0];
+    g.spend = g.members.reduce((s, a) => s + a.cost, 0);
+    g.capUnion = [...new Set(g.members.flatMap(a => a.covered))];
+    g.vendors = [...new Set(g.members.map(a => a.vendor))].length;
+
+    const sc = new Set(g.survivor.covered);
+    g.members.forEach(a => {
+      a.group = g;
+      a.isSurvivor = a === g.survivor;
+      const inter = a.covered.filter(c => sc.has(c)).length;
+      a.overlap = a.covered.length ? inter / a.covered.length : 0;   // share of this app's function already covered
+    });
+  });
+
+  /* ---- 3e. disposition + savings --------------------------------------- */
+  ASSETS.forEach(a => {
+    const dup = !a.isSurvivor && a.overlap >= 0.6;
+    let d;
+    if (a.risk >= 45 && a.value >= 42)                       d = 'Replace';
+    else if (dup && a.value < 68)                            d = 'Consolidate';
+    else if (a.value < 34 && a.util < 0.35 && !a.locked)     d = 'Retire';
+    else if (dup)                                            d = 'Consolidate';
+    else                                                     d = 'Invest';
+
+    if (d === 'Retire' && a.locked) d = a.risk >= 45 ? 'Replace' : 'Invest';
+    a.disp = d;
+
+    if (d === 'Retire')          { a.gross = a.cost;        a.net = a.cost - a.exitCost; }
+    else if (d === 'Consolidate'){ a.gross = a.cost * 0.86; a.net = a.gross - a.exitCost - a.migrationCost; }
+    else if (d === 'Replace')    { a.gross = a.cost * 0.28; a.net = a.gross - a.migrationCost * 0.5; }
+    else                         { a.gross = a.idleCost * 0.6; a.net = a.gross; }   /* licence reclamation at renewal */
+    a.net = Math.max(0, Math.round(a.net));
+    a.gross = Math.max(0, Math.round(a.gross));
+    a.efficiency = a.net / Math.max(6, a.disruption);
+  });
+
+  buildScenario();
+}
+
+/* ============================================================================
+   4. scenario / optimiser
+   ========================================================================== */
+let GROUPS = [];
+const SC = {target: 15, tolerance: 62, horizon: 24, protect: true};
+let PLAN = {picked: [], deferred: [], savings: 0, pctOfSpend: 0, met: false};
+
+function buildScenario(){
+  const spend = ASSETS.reduce((s, a) => s + a.cost, 0);
+  const need = spend * SC.target / 100;
+
+  const eligible = ASSETS.filter(a => a.net > 0)
+    .filter(a => !(SC.protect && a.locked && a.disp !== 'Invest'))
+    .filter(a => a.disruption <= SC.tolerance || a.disp === 'Invest')
+    .sort((x, y) => y.efficiency - x.efficiency);
+
+  const picked = [], deferred = [];
+  let total = 0;
+  for (const a of eligible){
+    const reachable = monthsBetween(ASOF, a.actionDate) <= SC.horizon;
+    if (!reachable){ deferred.push(a); continue; }
+    picked.push(a); total += a.net;
+    if (total >= need && a.disp !== 'Invest') break;
+  }
+  /* licence reclamation is contract-timed too, but needs no migration - always include */
+  PLAN = {
+    picked, deferred, spend, need,
+    savings: total,
+    pctOfSpend: total / spend * 100,
+    met: total >= need,
+    excluded: ASSETS.filter(a => a.net > 0 && !picked.includes(a) && !deferred.includes(a))
+  };
+}
+
+/* ============================================================================
+   5. tiny SVG chart helpers
+   ========================================================================== */
+function hbar(items, opts){
+  opts = opts || {};
+  const max = Math.max(1, ...items.map(i => i.v));
+  return '<table style="width:100%">' + items.map(i =>
+    `<tr><td style="width:38%;font-size:11px;border:0;padding:3px 6px 3px 0">${esc(i.k)}</td>
+     <td style="border:0;padding:3px 0"><div class="bar" style="min-width:100%"><i style="width:${(i.v/max*100).toFixed(1)}%;background:${i.c||'var(--verdigris)'}"></i></div></td>
+     <td class="num mini" style="width:${opts.w||74}px;border:0;padding:3px 0 3px 8px">${opts.fmt?opts.fmt(i.v):money(i.v)}</td></tr>`).join('') + '</table>';
+}
+
+function waterfall(steps, w, h){
+  w = w || 760; h = h || 190;
+  const pad = {l:8, r:8, t:24, b:34};
+  const max = Math.max(...steps.map(s => s.top));
+  const bw = (w - pad.l - pad.r) / steps.length - 14;
+  const y = v => pad.t + (1 - v / max) * (h - pad.t - pad.b);
+  let s = `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto">`;
+  steps.forEach((st, i) => {
+    const x = pad.l + i * ((w - pad.l - pad.r) / steps.length) + 7;
+    const y1 = y(st.top), y2 = y(st.bottom);
+    s += `<rect x="${x}" y="${y1}" width="${bw}" height="${Math.max(2, y2 - y1)}" rx="2" fill="${st.c}"/>`;
+    s += `<text x="${x + bw/2}" y="${y1 - 6}" text-anchor="middle" font-size="10.5" fill="#404040">${st.lab}</text>`;
+    s += `<text x="${x + bw/2}" y="${h - 16}" text-anchor="middle" font-size="10" fill="#6b8296">${esc(st.k)}</text>`;
+    if (st.k2) s += `<text x="${x + bw/2}" y="${h - 4}" text-anchor="middle" font-size="9" fill="#9bb0c0">${esc(st.k2)}</text>`;
+  });
+  /* Target line label is anchored left - right-anchoring collides with the final
+     bar's own value label whenever the plan lands close to the target - and carries
+     a white halo so it stays legible where the line crosses a filled bar. */
+  const ty = y(steps[0].top - (PLAN.need || 0));
+  s += `<line x1="${pad.l}" y1="${ty}" x2="${w-pad.r}" y2="${ty}" stroke="#993C1D" stroke-width="1" stroke-dasharray="4 3"/>`;
+  s += `<text x="${pad.l + 2}" y="${ty - 5}" font-size="9.5" fill="#993C1D" stroke="#fff" stroke-width="3.5" paint-order="stroke" stroke-linejoin="round">${SC.target}% target · ${money(steps[0].top - PLAN.need)}</text>`;
+  return s + '</svg>';
+}
+
+function scatter(assets, w, h){
+  w = w || 740; h = h || 340;
+  const pad = {l:44, r:16, t:16, b:36};
+  const X = v => pad.l + (v / 100) * (w - pad.l - pad.r);
+  const Y = v => h - pad.b - (v / 100) * (h - pad.t - pad.b);
+  const maxC = Math.max(...assets.map(a => a.cost));
+  const col = {Invest:'#0F6E56', Consolidate:'#44B0B1', Replace:'#BA7517', Retire:'#993C1D'};
+  let s = `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto">`;
+  s += `<rect x="${X(50)}" y="${pad.t}" width="${X(100)-X(50)}" height="${Y(50)-pad.t}" fill="#E1F5EE" opacity=".5"/>`;
+  s += `<rect x="${pad.l}" y="${Y(50)}" width="${X(50)-pad.l}" height="${h-pad.b-Y(50)}" fill="#FAECE7" opacity=".5"/>`;
+  for (let g = 0; g <= 100; g += 25){
+    s += `<line x1="${X(g)}" y1="${pad.t}" x2="${X(g)}" y2="${h-pad.b}" stroke="#eef3f5"/>`;
+    s += `<line x1="${pad.l}" y1="${Y(g)}" x2="${w-pad.r}" y2="${Y(g)}" stroke="#eef3f5"/>`;
+  }
+  assets.forEach(a => {
+    const r = 2.5 + Math.sqrt(a.cost / maxC) * 13;
+    s += `<circle cx="${X(a.value).toFixed(1)}" cy="${Y(a.risk).toFixed(1)}" r="${r.toFixed(1)}" fill="${col[a.disp]}" opacity=".5" stroke="${col[a.disp]}" stroke-width=".6"><title>${esc(a.name)} · ${esc(a.vendor)} · ${money(a.cost)} · value ${a.value} risk ${a.risk} · ${a.disp}</title></circle>`;
+  });
+  s += `<text x="${(pad.l+w-pad.r)/2}" y="${h-8}" text-anchor="middle" font-size="10.5" fill="#6b8296">Business value →</text>`;
+  s += `<text x="12" y="${(pad.t+h-pad.b)/2}" transform="rotate(-90 12 ${(pad.t+h-pad.b)/2})" text-anchor="middle" font-size="10.5" fill="#6b8296">Risk →</text>`;
+  s += `<text x="${X(97)}" y="${pad.t+14}" text-anchor="end" font-size="10" fill="#854F0B">high value · high risk → replace</text>`;
+  s += `<text x="${X(52)}" y="${h-pad.b-8}" font-size="10" fill="#0F6E56">high value · low risk → invest</text>`;
+  s += `<text x="${pad.l+6}" y="${pad.t+14}" font-size="10" fill="#993C1D">low value · high risk → retire</text>`;
+  return s + '</svg>';
+}
+
+function donut(items, size){
+  size = size || 150;
+  const tot = items.reduce((s, i) => s + i.v, 0) || 1;
+  const R = size/2 - 4, cx = size/2, cy = size/2;
+  let a0 = -Math.PI/2, s = `<svg viewBox="0 0 ${size} ${size}" style="width:${size}px;height:${size}px">`;
+  items.forEach(i => {
+    const a1 = a0 + (i.v / tot) * Math.PI * 2;
+    const large = a1 - a0 > Math.PI ? 1 : 0;
+    s += `<path d="M ${cx+R*Math.cos(a0)} ${cy+R*Math.sin(a0)} A ${R} ${R} 0 ${large} 1 ${cx+R*Math.cos(a1)} ${cy+R*Math.sin(a1)} L ${cx} ${cy} Z" fill="${i.c}"><title>${esc(i.k)}: ${i.v}</title></path>`;
+    a0 = a1;
+  });
+  s += `<circle cx="${cx}" cy="${cy}" r="${R*0.58}" fill="#fff"/>`;
+  s += `<text x="${cx}" y="${cy+2}" text-anchor="middle" font-size="17" fill="#09375F" font-weight="500">${tot}</text>`;
+  s += `<text x="${cx}" y="${cy+15}" text-anchor="middle" font-size="9" fill="#6b8296">assets</text>`;
+  return s + '</svg>';
+}
+
+/* ============================================================================
+   6. views
+   ========================================================================== */
+const DISP_COL = {Invest:'var(--invest)', Consolidate:'var(--consolidate)', Replace:'var(--replace)', Retire:'var(--retire)'};
+
+const TABS = [
+  {g:'OVERVIEW', id:'exec',   ic:'▦', t:'Executive summary'},
+  {g:'OVERVIEW', id:'spend',  ic:'$', t:'Technology spend'},
+  {g:'ANALYZE',  id:'redun',  ic:'⧉', t:'Redundancy'},
+  {g:'ANALYZE',  id:'explore',ic:'▤', t:'Portfolio explorer'},
+  {g:'ANALYZE',  id:'risk',   ic:'⚠', t:'Risk & dependencies'},
+  {g:'ANALYZE',  id:'ai',     ic:'◈', t:'AI & agent sprawl'},
+  {g:'ACT',      id:'recs',   ic:'✓', t:'Recommendations'},
+  {g:'ACT',      id:'scen',   ic:'⚙', t:'Savings scenarios'},
+  {g:'ACT',      id:'road',   ic:'▸', t:'Roadmap & renewals'},
+  {g:'DATA',     id:'data',   ic:'↑', t:'Import & method'}
+];
+let TAB = 'exec';
+
+function menu(){
+  let h = '', g = '';
+  TABS.forEach(t => {
+    if (t.g !== g){ g = t.g; h += `<div class="grp">${g}</div>`; }
+    h += `<div class="nav${t.id===TAB?' on':''}" data-tab="${t.id}"><i>${t.ic}</i>${t.t}</div>`;
+  });
+  $('menu').innerHTML = h;
+  $('menu').querySelectorAll('.nav').forEach(n => n.onclick = () => { TAB = n.dataset.tab; render(); });
+  const spend = ASSETS.reduce((s, a) => s + a.cost, 0);
+  $('railfoot').innerHTML = `${ASSETS.length} assets · ${money(spend)}<br>Inferred ${ASSETS.reduce((s,a)=>s+a.dependsOn.length,0)} dependency edges<br>As of ${RAW.asOf}`;
+}
+
+function render(){
+  menu();
+  const t = TABS.find(x => x.id === TAB);
+  $('crumb').textContent = 'Dashboards / ' + t.t;
+  $('chipScope').textContent = `${ASSETS.length} assets · ${money(PLAN.spend)} · target ${SC.target}%`;
+  $('view').innerHTML = ({exec:vExec, spend:vSpend, redun:vRedun, explore:vExplore, risk:vRisk,
+                          ai:vAI, recs:vRecs, scen:vScen, road:vRoad, data:vData})[TAB]();
+  wire();
+  window.scrollTo(0, 0);
+}
+
+/* ---------- executive ---------- */
+function vExec(){
+  const spend = PLAN.spend;
+  const by = d => PLAN.picked.filter(a => a.disp === d).reduce((s, a) => s + a.net, 0);
+  const retire = by('Retire'), cons = by('Consolidate'), repl = by('Replace'), reclaim = by('Invest');
+  const total = PLAN.savings;
+  const counts = ['Invest','Consolidate','Replace','Retire'].map(d => ({k:d, v:ASSETS.filter(a=>a.disp===d).length, c:DISP_COL[d]}));
+  let run = spend;
+  const steps = [{k:'Baseline', k2:'current run rate', top:spend, bottom:0, lab:money(spend), c:'#09375F'}];
+  /* Only show levers this plan actually pulls. A zero-height bar labelled "−$0"
+     reads as a rendering fault, not as information. Unused levers are reported
+     underneath as remaining headroom instead. */
+  const levers = [['Retire',retire],['Consolidate',cons],['Replace',repl],['Reclaim',reclaim]];
+  levers.filter(([,v]) => v > 0).forEach(([k,v]) => {
+    steps.push({k, k2:'−'+money(v), top:run, bottom:run-v, lab:'−'+money(v), c:'#44B0B1'});
+    run -= v;
+  });
+  steps.push({k:'Target run rate', k2:fmtDate(addDays(ASOF, SC.horizon*30)), top:run, bottom:0, lab:money(run), c:'#0f4d80'});
+  const unused = levers.filter(([,v]) => v === 0).map(([k]) => k);
+  const headroom = ASSETS.filter(a => a.net > 0 && !PLAN.picked.includes(a) && !PLAN.deferred.includes(a))
+                         .reduce((s,a) => s + a.net, 0);
+
+  const guard = ASSETS.filter(a => a.locked).length;
+  const violations = PLAN.picked.filter(a => a.disp === 'Retire' && a.locked).length;
+  const top = PLAN.picked.filter(a => a.disp !== 'Invest').slice(0, 12);
+
+  return `<h1>Executive summary</h1>
+  <p class="sub">Quarterly technology portfolio review for a ${ASSETS.length}-asset estate. Cost and usage come from the inventory; risk, dependencies, compliance exposure and AI governance are inferred at ingest. Every recommendation below carries its evidence.</p>
+  ${violations ? `<div class="warnbox"><b>${violations}</b> guardrail violations in the current plan.</div>`
+   : `<div class="okbox">Guardrails hold: <b>${guard}</b> protected assets (mission critical, revenue-bearing, in-scope for regulation, or high blast radius) are excluded from retirement. Zero violations in the current plan.</div>`}
+  <div class="kpis">
+    <div class="kpi"><div class="l">Total technology spend</div><div class="v">${money(spend)}</div><div class="d">${ASSETS.length} assets · ${[...new Set(ASSETS.map(a=>a.vendor))].length} vendors</div></div>
+    <div class="kpi"><div class="l">Identified savings</div><div class="v" style="color:var(--good)">${money(total)}</div><div class="d">net of exit &amp; migration cost</div></div>
+    <div class="kpi"><div class="l">Reduction achieved</div><div class="v" style="color:${PLAN.met?'var(--good)':'var(--bad)'}">${PLAN.pctOfSpend.toFixed(1)}%</div><div class="d">against a ${SC.target}% target</div></div>
+    <div class="kpi"><div class="l">Deferred by contract</div><div class="v" style="color:var(--warn)">${money(PLAN.deferred.reduce((s,a)=>s+a.net,0))}</div><div class="d">${PLAN.deferred.length} assets locked past ${SC.horizon} months</div></div>
+    <div class="kpi"><div class="l">Assets at risk</div><div class="v" style="color:var(--bad)">${ASSETS.filter(a=>a.risk>=45).length}</div><div class="d">risk score 45+</div></div>
+  </div>
+  <div class="card"><h2>Path to target — current run rate to post-action run rate</h2>${waterfall(steps)}
+    <div class="mini" style="margin-top:6px">Only actions reachable inside the ${SC.horizon}-month horizon are counted. Consolidation is netted at 86% of licence cost because surviving platforms absorb migrated seats.
+    ${unused.length ? `The target is met without touching <b>${esc(unused.join(' or '))}</b> — a further ${money(headroom)} of validated actions remains as headroom if the CIO wants more.` : ''}</div>
+  </div>
+  <div class="row r21">
+    <div class="card"><h2>Highest-value actions</h2>
+      <table><thead><tr><th>Application</th><th>Vendor</th><th>Action</th><th class="num">Net saving</th><th class="num">Disruption</th><th>Earliest</th></tr></thead><tbody>
+      ${top.map(a => `<tr class="clk" data-id="${a.id}"><td>${esc(a.name)}</td><td class="mini">${esc(a.vendor)}</td>
+        <td><span class="pill p-${a.disp}">${a.disp}</span></td><td class="num">${money0(a.net)}</td>
+        <td class="num">${a.disruption}</td><td class="mini">${fmtDate(a.actionDate)}</td></tr>`).join('')}
+      </tbody></table></div>
+    <div class="card"><h2>Disposition mix</h2><div style="display:flex;justify-content:center">${donut(counts)}</div>
+      <div class="legend">${counts.map(c=>`<span><i style="background:${c.c}"></i>${c.k} ${c.v}</span>`).join('')}</div>
+      <div class="sec">Portfolio health</div>
+      ${hbar([
+        {k:'Licences acquired', v:ASSETS.reduce((s,a)=>s+a.acq,0)},
+        {k:'Assigned', v:ASSETS.reduce((s,a)=>s+a.used,0)},
+        {k:'Active in 90 days', v:ASSETS.reduce((s,a)=>s+a.act,0)}
+      ], {fmt:v=>v.toLocaleString(), w:64})}
+      <div class="mini" style="margin-top:5px">Median utilisation ${pct(median(ASSETS.map(a=>a.util)))} — the single largest recoverable pool.</div>
+    </div>
+  </div>`;
+}
+const median = arr => { const s = [...arr].sort((a,b)=>a-b); return s[Math.floor(s.length/2)] || 0; };
+
+/* ---------- technology spend ---------- */
+function vSpend(){
+  const agg = (key, n) => {
+    const m = {};
+    ASSETS.forEach(a => m[a[key]] = (m[a[key]] || 0) + a.cost);
+    return Object.entries(m).map(([k,v]) => ({k,v})).sort((a,b)=>b.v-a.v).slice(0, n||99);
+  };
+  const types = agg('type');
+  const tc = {'SaaS Subscription':'#09375F','AI Tool':'#44B0B1','Platform':'#0f4d80','Custom Application':'#BA7517','AI Agent':'#0F6E56'};
+  const perUser = ASSETS.filter(a=>a.act>0).sort((a,b)=>b.cpau-a.cpau).slice(0,10);
+  return `<h1>Technology spend</h1>
+  <p class="sub">Where the ${money(PLAN.spend)} actually goes. Concentration matters twice over: it shows negotiating leverage, and it shows single-vendor exposure.</p>
+  <div class="kpis">
+    <div class="kpi"><div class="l">Annual spend</div><div class="v">${money(PLAN.spend)}</div></div>
+    <div class="kpi"><div class="l">Contracted value</div><div class="v">${money(ASSETS.reduce((s,a)=>s+a.tcv,0))}</div><div class="d">total remaining commitments</div></div>
+    <div class="kpi"><div class="l">Spend on idle seats</div><div class="v" style="color:var(--bad)">${money(ASSETS.reduce((s,a)=>s+a.idleCost,0))}</div><div class="d">seats inactive 90 days</div></div>
+    <div class="kpi"><div class="l">Top vendor share</div><div class="v">${pct(Math.max(...ASSETS.map(a=>a.vShare)))}</div><div class="d">concentration risk</div></div>
+  </div>
+  <div class="row r2">
+    <div class="card"><h2>Spend by vendor — top 15</h2>${hbar(agg('vendor',15))}</div>
+    <div class="card"><h2>Spend by category</h2>${hbar(agg('cat',16))}</div>
+  </div>
+  <div class="row r3">
+    <div class="card"><h2>By asset type</h2>${hbar(types.map(t=>({...t,c:tc[t.k]||'#44B0B1'})))}</div>
+    <div class="card"><h2>By owning department</h2>${hbar(agg('dept',10))}</div>
+    <div class="card"><h2>By criticality</h2>${hbar(agg('crit'))}</div>
+  </div>
+  <div class="card"><h2>Worst cost per active user</h2>
+    <table><thead><tr><th>Application</th><th>Vendor</th><th class="num">Annual cost</th><th class="num">Active 90d</th><th class="num">Cost / active user</th><th>Action</th></tr></thead><tbody>
+    ${perUser.map(a=>`<tr class="clk" data-id="${a.id}"><td>${esc(a.name)}</td><td class="mini">${esc(a.vendor)}</td>
+      <td class="num">${money0(a.cost)}</td><td class="num">${a.act.toLocaleString()}</td>
+      <td class="num" style="color:var(--bad)">${money0(a.cpau)}</td><td><span class="pill p-${a.disp}">${a.disp}</span></td></tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+/* ---------- redundancy ---------- */
+function vRedun(){
+  const gs = [...GROUPS].sort((a,b) => b.spend - a.spend);
+  const dupSpend = ASSETS.filter(a=>!a.isSurvivor && a.overlap>=.6).reduce((s,a)=>s+a.cost,0);
+  return `<h1>Redundancy &amp; overlap</h1>
+  <p class="sub">Applications are grouped by the capabilities they actually cover — not by category label. Within each group one product is designated the survivor on capability fit, adoption, risk and unit economics; the rest are scored on how much of their function the survivor already provides.</p>
+  <div class="kpis">
+    <div class="kpi"><div class="l">Overlap groups</div><div class="v">${gs.length}</div></div>
+    <div class="kpi"><div class="l">Duplicated applications</div><div class="v">${ASSETS.filter(a=>!a.isSurvivor&&a.overlap>=.6).length}</div><div class="d">60%+ function already covered</div></div>
+    <div class="kpi"><div class="l">Spend inside duplicates</div><div class="v" style="color:var(--bad)">${money(dupSpend)}</div></div>
+    <div class="kpi"><div class="l">Consolidation savings</div><div class="v" style="color:var(--good)">${money(ASSETS.filter(a=>a.disp==='Consolidate').reduce((s,a)=>s+a.net,0))}</div><div class="d">net of migration</div></div>
+  </div>
+  ${gs.map(g => {
+    const dups = g.members.filter(a => !a.isSurvivor && a.overlap >= .6);
+    return `<div class="card"><h2>${esc(g.cat)} — ${g.members.length} applications, ${g.vendors} vendors, ${money(g.spend)}</h2>
+    <div class="mini" style="margin-bottom:8px">Capabilities in group: ${g.capUnion.map(c=>`<span class="tag">${esc(c)}</span>`).join('')}</div>
+    <div class="infobox" style="margin-bottom:9px">Survivor: <b>${esc(g.survivor.name)}</b> (${esc(g.survivor.vendor)}) — ${g.survivor.vFit?'recognised category leader, ':''}covers ${g.survivor.covered.length} of ${g.capUnion.length} capabilities, value ${g.survivor.value}, risk ${g.survivor.risk}, ${money(g.survivor.cost)}.
+      Consolidating ${dups.length} duplicates releases <b>${money(dups.reduce((s,a)=>s+a.net,0))}</b> net.</div>
+    <div class="scroll"><table><thead><tr><th>Application</th><th>Vendor</th><th>Capabilities covered</th><th class="num">Overlap</th><th class="num">Annual cost</th><th class="num">Active</th><th class="num">Util</th><th>Action</th></tr></thead><tbody>
+    ${g.members.slice(0,40).map(a=>`<tr class="clk" data-id="${a.id}">
+      <td>${a.isSurvivor?'<b style="color:var(--good)">★ </b>':''}${esc(a.name)}</td>
+      <td class="mini">${esc(a.vendor)}</td>
+      <td>${a.covered.map(c=>`<span class="tag">${esc(c)}</span>`).join('')}</td>
+      <td class="num">${a.isSurvivor?'—':pct(a.overlap)}</td>
+      <td class="num">${money0(a.cost)}</td><td class="num">${a.act.toLocaleString()}</td>
+      <td class="num">${pct(a.util)}</td><td><span class="pill p-${a.disp}">${a.disp}</span></td></tr>`).join('')}
+    </tbody></table></div>
+    ${g.members.length>40?`<div class="mini" style="margin-top:5px">Showing 40 of ${g.members.length}.</div>`:''}
+    </div>`;
+  }).join('')}`;
+}
+
+/* ---------- explorer ---------- */
+let FILT = {q:'', cat:'', disp:'', type:'', sort:'cost', dir:-1};
+function vExplore(){
+  const cats = [...new Set(ASSETS.map(a=>a.cat))].sort();
+  const types = [...new Set(ASSETS.map(a=>a.type))].sort();
+  const rows = filtered();
+  return `<h1>Portfolio explorer</h1>
+  <p class="sub">Every asset positioned on inferred business value against inferred risk. Bubble area is annual spend. Click any row or bubble for the full record and its scoring breakdown.</p>
+  <div class="card"><h2>Value / risk quadrant — ${rows.length} assets</h2>${scatter(rows)}
+    <div class="legend">${Object.entries(DISP_COL).map(([k,c])=>`<span><i style="background:${c}"></i>${k}</span>`).join('')}</div></div>
+  <div class="card">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <input type="text" id="fq" placeholder="Search name or vendor" value="${esc(FILT.q)}" style="width:220px">
+      <select id="fcat"><option value="">All categories</option>${cats.map(c=>`<option${FILT.cat===c?' selected':''}>${esc(c)}</option>`).join('')}</select>
+      <select id="ftype"><option value="">All types</option>${types.map(c=>`<option${FILT.type===c?' selected':''}>${esc(c)}</option>`).join('')}</select>
+      <select id="fdisp"><option value="">All actions</option>${['Invest','Consolidate','Replace','Retire'].map(c=>`<option${FILT.disp===c?' selected':''}>${c}</option>`).join('')}</select>
+      <span class="mini" style="align-self:center">${rows.length} of ${ASSETS.length} · ${money(rows.reduce((s,a)=>s+a.cost,0))}</span>
+    </div>
+    <div class="scroll"><table><thead><tr>
+      ${[['name','Application'],['vendor','Vendor'],['cat','Category'],['type','Type'],['cost','Annual cost'],
+         ['util','Util'],['value','Value'],['risk','Risk'],['blast','Blast'],['disp','Action'],['net','Net saving']]
+        .map(([k,l])=>`<th data-sort="${k}">${l}${FILT.sort===k?(FILT.dir<0?' ▾':' ▴'):''}</th>`).join('')}
+    </tr></thead><tbody>
+    ${rows.slice(0,300).map(a=>`<tr class="clk" data-id="${a.id}">
+      <td>${esc(a.name)}</td><td class="mini">${esc(a.vendor)}</td><td class="mini">${esc(a.cat)}</td>
+      <td class="mini">${esc(a.type)}</td><td class="num">${money0(a.cost)}</td>
+      <td class="num">${pct(a.util)}</td><td class="num">${a.value}</td>
+      <td class="num" style="color:${a.risk>=45?'var(--bad)':'inherit'}">${a.risk}</td>
+      <td class="num">${a.blast}</td><td><span class="pill p-${a.disp}">${a.disp}</span></td>
+      <td class="num">${a.net?money0(a.net):'—'}</td></tr>`).join('')}
+    </tbody></table></div>
+    ${rows.length>300?`<div class="mini" style="margin-top:6px">Showing the first 300 of ${rows.length} matching assets — narrow the filters to see the rest.</div>`:''}
+  </div>`;
+}
+function filtered(){
+  const q = FILT.q.toLowerCase();
+  let r = ASSETS.filter(a =>
+    (!q || a.name.toLowerCase().includes(q) || a.vendor.toLowerCase().includes(q)) &&
+    (!FILT.cat || a.cat === FILT.cat) && (!FILT.type || a.type === FILT.type) && (!FILT.disp || a.disp === FILT.disp));
+  const k = FILT.sort;
+  return r.sort((x, y) => (typeof x[k] === 'string' ? String(x[k]).localeCompare(String(y[k])) : x[k]-y[k]) * FILT.dir);
+}
+
+/* ---------- risk & dependencies ---------- */
+function vRisk(){
+  const hi = ASSETS.filter(a=>a.risk>=45).sort((a,b)=>b.risk-a.risk);
+  const blast = [...ASSETS].sort((a,b)=>b.blast-a.blast).slice(0,14);
+  const lifeAgg = {};
+  ASSETS.forEach(a => lifeAgg[a.vLife] = (lifeAgg[a.vLife]||0) + a.cost);
+  const regAgg = {};
+  ASSETS.forEach(a => regAgg[a.reg] = (regAgg[a.reg]||0) + a.cost);
+  return `<h1>Risk &amp; dependencies</h1>
+  <p class="sub">The source inventory contains no risk or dependency data. Both are inferred here — risk from vendor lifecycle, security posture, data sensitivity, abandonment signal and vendor concentration; dependencies from capability-layer adjacency, ownership co-location and platform coupling. Inferred values are stated as inferences, never as facts.</p>
+  <div class="infobox">Dependency inference produced <b>${ASSETS.reduce((s,a)=>s+a.dependsOn.length,0)}</b> edges across ${ASSETS.length} assets. Blast radius is the transitive count of applications that break if an asset is withdrawn. In a pilot this graph is replaced by real integration telemetry — CMDB relationships, API gateway logs and SSO grants.</div>
+  <div class="kpis">
+    <div class="kpi"><div class="l">High risk assets</div><div class="v" style="color:var(--bad)">${hi.length}</div><div class="d">${money(hi.reduce((s,a)=>s+a.cost,0))} of spend</div></div>
+    <div class="kpi"><div class="l">Vendor at risk / declining</div><div class="v">${ASSETS.filter(a=>['At Risk','Declining','Key-Person Risk'].includes(a.vLife)).length}</div></div>
+    <div class="kpi"><div class="l">Guardrail-protected</div><div class="v">${ASSETS.filter(a=>a.locked).length}</div><div class="d">never auto-retired</div></div>
+    <div class="kpi"><div class="l">Regulated spend</div><div class="v">${money(ASSETS.filter(a=>a.reg!=='None').reduce((s,a)=>s+a.cost,0))}</div><div class="d">SOX / GDPR scope</div></div>
+  </div>
+  <div class="row r2">
+    <div class="card"><h2>Spend by vendor lifecycle</h2>${hbar(Object.entries(lifeAgg).map(([k,v])=>({k,v,c:LIFE_RISK[k]>=24?'#993C1D':LIFE_RISK[k]>=6?'#BA7517':'#0F6E56'})).sort((a,b)=>b.v-a.v))}</div>
+    <div class="card"><h2>Spend by regulatory scope</h2>${hbar(Object.entries(regAgg).map(([k,v])=>({k,v})).sort((a,b)=>b.v-a.v))}</div>
+  </div>
+  <div class="row r2">
+    <div class="card"><h2>Largest blast radius — handle with care</h2>
+      <table><thead><tr><th>Application</th><th>Category</th><th class="num">Depends on</th><th class="num">Used by</th><th class="num">Blast</th><th>Action</th></tr></thead><tbody>
+      ${blast.map(a=>`<tr class="clk" data-id="${a.id}"><td>${esc(a.name)}</td><td class="mini">${esc(a.cat)}</td>
+        <td class="num">${a.dependsOn.length}</td><td class="num">${a.usedBy.length}</td>
+        <td class="num" style="color:var(--bad)">${a.blast}</td><td><span class="pill p-${a.disp}">${a.disp}</span></td></tr>`).join('')}
+      </tbody></table></div>
+    <div class="card"><h2>Highest inferred risk</h2>
+      <table><thead><tr><th>Application</th><th>Vendor</th><th>Driver</th><th class="num">Risk</th><th>Action</th></tr></thead><tbody>
+      ${hi.slice(0,14).map(a=>{
+        const p = a.riskParts;
+        const top = Object.entries({'vendor lifecycle':p.rLife,'security findings':p.rSec,'data sensitivity':p.rData,'AI governance':p.rGov,'abandonment':p.rDecay,'concentration':p.rConc}).sort((x,y)=>y[1]-x[1])[0][0];
+        return `<tr class="clk" data-id="${a.id}"><td>${esc(a.name)}</td><td class="mini">${esc(a.vendor)}</td>
+        <td class="mini">${top}</td><td class="num" style="color:var(--bad)">${a.risk}</td><td><span class="pill p-${a.disp}">${a.disp}</span></td></tr>`;}).join('')}
+      </tbody></table></div>
+  </div>`;
+}
+
+/* ---------- AI sprawl ---------- */
+function vAI(){
+  const ai = ASSETS.filter(a=>a.isAI).sort((a,b)=>b.cost-a.cost);
+  const shadow = ai.filter(a=>a.aiGov==='Shadow / Unsanctioned');
+  const byModel = {};
+  ai.forEach(a => byModel[a.aiModel] = (byModel[a.aiModel]||0) + a.cost);
+  const byGov = {};
+  ai.forEach(a => byGov[a.aiGov] = (byGov[a.aiGov]||0) + a.cost);
+  const egress = ai.filter(a=>a.aiEgress);
+  return `<h1>AI &amp; agent sprawl</h1>
+  <p class="sub">${ai.length} AI tools and agents across the estate. This is the population traditional portfolio tools handle worst: procurement is decentralised, adoption is unmeasured, and several products resell the same underlying model at different margins.</p>
+  <div class="kpis">
+    <div class="kpi"><div class="l">AI tools &amp; agents</div><div class="v">${ai.length}</div><div class="d">${ai.filter(a=>a.type==='AI Agent').length} agents</div></div>
+    <div class="kpi"><div class="l">AI spend</div><div class="v">${money(ai.reduce((s,a)=>s+a.cost,0))}</div><div class="d">${pct(ai.reduce((s,a)=>s+a.cost,0)/PLAN.spend)} of portfolio</div></div>
+    <div class="kpi"><div class="l">Shadow / unsanctioned</div><div class="v" style="color:var(--bad)">${shadow.length}</div><div class="d">${money(shadow.reduce((s,a)=>s+a.cost,0))} outside governance</div></div>
+    <div class="kpi"><div class="l">Data egress flagged</div><div class="v" style="color:var(--bad)">${egress.length}</div><div class="d">sensitive data leaving tenant</div></div>
+    <div class="kpi"><div class="l">Median AI utilisation</div><div class="v">${pct(median(ai.map(a=>a.util)))}</div></div>
+  </div>
+  ${shadow.length?`<div class="warnbox"><b>${shadow.length} AI assets are unsanctioned</b>, carrying ${money(shadow.reduce((s,a)=>s+a.cost,0))} of spend. These were flagged because they sit outside the AI &amp; Automation category or have near-zero measured adoption — the classic signature of departmental AI procurement that never reached architecture review.</div>`:''}
+  <div class="row r2">
+    <div class="card"><h2>Spend by underlying model provider</h2>${hbar(Object.entries(byModel).map(([k,v])=>({k,v})).sort((a,b)=>b.v-a.v))}
+      <div class="mini" style="margin-top:6px">Where several products share a provider, the portfolio is paying multiple margins on one model. That is the first consolidation conversation to have.</div></div>
+    <div class="card"><h2>Spend by governance status</h2>${hbar(Object.entries(byGov).map(([k,v])=>({k,v,c:k.startsWith('Shadow')?'#993C1D':k==='Under Review'?'#BA7517':k==='Pilot'?'#44B0B1':'#0F6E56'})).sort((a,b)=>b.v-a.v))}</div>
+  </div>
+  <div class="card"><h2>AI inventory</h2>
+    <div class="scroll"><table><thead><tr><th>Asset</th><th>Vendor</th><th>Model</th><th>Governance</th><th>Sits in</th><th class="num">Cost</th><th class="num">Util</th><th class="num">Risk</th><th>Egress</th><th>Action</th></tr></thead><tbody>
+    ${ai.map(a=>`<tr class="clk" data-id="${a.id}"><td>${esc(a.name)}</td><td class="mini">${esc(a.vendor)}</td>
+      <td class="mini">${esc(a.aiModel)}</td>
+      <td class="mini" style="color:${a.aiGov.startsWith('Shadow')?'var(--bad)':'inherit'}">${esc(a.aiGov)}</td>
+      <td class="mini">${esc(a.cat)}</td><td class="num">${money0(a.cost)}</td><td class="num">${pct(a.util)}</td>
+      <td class="num">${a.risk}</td><td class="mini">${a.aiEgress?'<span style="color:var(--bad)">yes</span>':'no'}</td>
+      <td><span class="pill p-${a.disp}">${a.disp}</span></td></tr>`).join('')}
+    </tbody></table></div></div>`;
+}
+
+/* ---------- recommendations ---------- */
+function vRecs(){
+  const inPlan = new Set(PLAN.picked.map(a=>a.id));
+  const rows = [...ASSETS].sort((a,b)=>b.net-a.net);
+  const sum = d => ASSETS.filter(a=>a.disp===d);
+  return `<h1>Recommendations</h1>
+  <p class="sub">One disposition per asset, with the evidence behind it. "In plan" marks the actions the optimiser selected to reach the ${SC.target}% target inside the ${SC.horizon}-month horizon; the rest remain valid but sit outside the current wave.</p>
+  <div class="kpis">
+    ${['Invest','Consolidate','Replace','Retire'].map(d=>{const s=sum(d);return `<div class="kpi" style="border-left:3px solid ${DISP_COL[d]};border-radius:0 7px 7px 0">
+      <div class="l">${d}</div><div class="v">${s.length}</div>
+      <div class="d">${money(s.reduce((x,a)=>x+a.net,0))} net · ${money(s.reduce((x,a)=>x+a.cost,0))} spend</div></div>`}).join('')}
+  </div>
+  <div class="card">
+    <div class="infobox"><b>How to read this.</b> Invest = retain and fund; savings come from reclaiming idle licences at renewal. Consolidate = fold into the survivor of its overlap group. Replace = capability is needed but the current product is too risky. Retire = low value, low adoption, nothing unique, tolerable blast radius.</div>
+    <div class="scroll"><table><thead><tr><th>Application</th><th>Vendor</th><th>Action</th><th>Rationale</th><th class="num">Net saving</th><th class="num">Disrupt</th><th class="num">Blast</th><th>Earliest</th><th>Owner</th><th>Plan</th></tr></thead><tbody>
+    ${rows.slice(0,300).map(a=>`<tr class="clk" data-id="${a.id}">
+      <td>${esc(a.name)}</td><td class="mini">${esc(a.vendor)}</td>
+      <td><span class="pill p-${a.disp}">${a.disp}</span></td>
+      <td class="mini">${esc(rationale(a))}</td>
+      <td class="num">${a.net?money0(a.net):'—'}</td><td class="num">${a.disruption}</td><td class="num">${a.blast}</td>
+      <td class="mini">${fmtDate(a.actionDate)}</td><td class="mini">${esc(a.owner)}</td>
+      <td class="mini">${inPlan.has(a.id)?'<span style="color:var(--good)">✓ in plan</span>':(PLAN.deferred.includes(a)?'<span style="color:var(--warn)">deferred</span>':'—')}</td></tr>`).join('')}
+    </tbody></table></div>
+    <div class="mini" style="margin-top:6px">Showing the top 300 by net saving. Use “Export actions (CSV)” for the full list.</div>
+  </div>`;
+}
+
+function rationale(a){
+  const r = [];
+  if (a.disp === 'Retire')      r.push(`value ${a.value}/100, ${pct(a.util)} utilised, blast radius ${a.blast}`);
+  if (a.disp === 'Consolidate') r.push(`${pct(a.overlap)} of function already in ${a.group ? a.group.survivor.name : 'the survivor'}`);
+  if (a.disp === 'Replace')     r.push(`risk ${a.risk} (${a.vLife}${a.findings?', '+a.findings+' open findings':''}) but value ${a.value}`);
+  if (a.disp === 'Invest')      r.push(a.locked ? `protected: ${a.lockReasons[0]}` : `value ${a.value}, risk ${a.risk}`);
+  if (a.idleSeats > 0 && a.disp === 'Invest') r.push(`${a.idleSeats.toLocaleString()} idle seats`);
+  return r.join('; ');
+}
+
+/* ---------- scenarios ---------- */
+function vScen(){
+  const excl = PLAN.excluded.reduce((s,a)=>s+a.net,0);
+  return `<h1>Savings scenarios</h1>
+  <p class="sub">The optimiser ranks every candidate action by net saving per unit of disruption, then takes them in order until the target is met — skipping anything whose contract window falls outside the horizon, and never touching a guardrail-protected asset.</p>
+  <div class="row r3">
+    <div class="card"><label class="sl">Savings target <b id="lTarget">${SC.target}%</b> — ${money(PLAN.spend*SC.target/100)}</label>
+      <input type="range" id="sTarget" min="5" max="35" step="1" value="${SC.target}">
+      <div class="mini">How much run-rate cost the CIO has committed to remove.</div></div>
+    <div class="card"><label class="sl">Disruption tolerance <b id="lTol">${SC.tolerance}</b></label>
+      <input type="range" id="sTol" min="20" max="100" step="1" value="${SC.tolerance}">
+      <div class="mini">Maximum disruption score the business will accept on any single action.</div></div>
+    <div class="card"><label class="sl">Horizon <b id="lHor">${SC.horizon} months</b></label>
+      <input type="range" id="sHor" min="6" max="48" step="3" value="${SC.horizon}">
+      <div class="mini">Actions are only counted if the contract notice window opens inside this period.</div></div>
+  </div>
+  <div class="card" style="display:flex;align-items:center;gap:14px">
+    <label style="font-size:11.5px;display:flex;align-items:center;gap:7px;cursor:pointer">
+      <input type="checkbox" id="cProtect" ${SC.protect?'checked':''}> Enforce guardrails on mission-critical, revenue-bearing and regulated assets</label>
+    <span class="mini">${ASSETS.filter(a=>a.locked).length} assets protected</span>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><div class="l">Plan savings</div><div class="v" style="color:${PLAN.met?'var(--good)':'var(--bad)'}">${money(PLAN.savings)}</div><div class="d">${PLAN.pctOfSpend.toFixed(1)}% of spend</div></div>
+    <div class="kpi"><div class="l">Target</div><div class="v">${money(PLAN.need)}</div><div class="d">${PLAN.met?'met':'shortfall '+money(PLAN.need-PLAN.savings)}</div></div>
+    <div class="kpi"><div class="l">Actions in plan</div><div class="v">${PLAN.picked.length}</div><div class="d">of ${ASSETS.filter(a=>a.net>0).length} candidates</div></div>
+    <div class="kpi"><div class="l">Deferred by contract</div><div class="v" style="color:var(--warn)">${money(PLAN.deferred.reduce((s,a)=>s+a.net,0))}</div><div class="d">${PLAN.deferred.length} assets</div></div>
+    <div class="kpi"><div class="l">Excluded by guardrail / tolerance</div><div class="v">${money(excl)}</div><div class="d">${PLAN.excluded.length} assets</div></div>
+  </div>
+  ${PLAN.met?`<div class="okbox">Target met with ${PLAN.picked.length} actions. Peak disruption score in the plan is ${Math.max(0,...PLAN.picked.map(a=>a.disruption))}, against a tolerance of ${SC.tolerance}.</div>`
+   :`<div class="warnbox">Target not reachable under these constraints — short by ${money(PLAN.need-PLAN.savings)}. Raise the horizon to capture more renewal windows, or raise disruption tolerance.</div>`}
+  <div class="row r2">
+    <div class="card"><h2>Deferred — savings real but contractually out of reach</h2>
+      <table><thead><tr><th>Application</th><th>Action</th><th class="num">Net</th><th>Notice opens</th></tr></thead><tbody>
+      ${PLAN.deferred.sort((a,b)=>b.net-a.net).slice(0,12).map(a=>`<tr class="clk" data-id="${a.id}"><td>${esc(a.name)}</td>
+        <td><span class="pill p-${a.disp}">${a.disp}</span></td><td class="num">${money0(a.net)}</td>
+        <td class="mini">${fmtDate(a.actionDate)}</td></tr>`).join('') || '<tr><td colspan="4" class="mini">None.</td></tr>'}
+      </tbody></table></div>
+    <div class="card"><h2>Excluded — guardrail or disruption tolerance</h2>
+      <table><thead><tr><th>Application</th><th>Reason</th><th class="num">Disrupt</th><th class="num">Net forgone</th></tr></thead><tbody>
+      ${PLAN.excluded.sort((a,b)=>b.net-a.net).slice(0,12).map(a=>`<tr class="clk" data-id="${a.id}"><td>${esc(a.name)}</td>
+        <td class="mini">${esc(a.lockReasons[0] || 'disruption above tolerance')}</td>
+        <td class="num">${a.disruption}</td><td class="num">${money0(a.net)}</td></tr>`).join('') || '<tr><td colspan="4" class="mini">None.</td></tr>'}
+      </tbody></table></div>
+  </div>`;
+}
+
+/* ---------- roadmap ---------- */
+function vRoad(){
+  const waves = {};
+  PLAN.picked.concat(PLAN.deferred).forEach(a => {
+    const q = a.actionDate.getFullYear() + ' Q' + (Math.floor(a.actionDate.getMonth()/3)+1);
+    (waves[q] = waves[q] || []).push(a);
+  });
+  const keys = Object.keys(waves).sort();
+  const soon = ASSETS.filter(a => a.auto && a.daysToAction >= 0 && a.daysToAction <= 90)
+                     .sort((a,b)=>a.daysToAction-b.daysToAction);
+  const maxW = Math.max(1, ...keys.map(k => waves[k].reduce((s,a)=>s+a.net,0)));
+  return `<h1>Roadmap &amp; renewals</h1>
+  <p class="sub">Actions sequenced by when the contract notice window actually opens. A saving is only bankable in the quarter its notice period allows — this is the difference between a savings target and a savings plan.</p>
+  ${soon.length?`<div class="warnbox"><b>${soon.length} auto-renewing contracts</b> have a notice deadline inside 90 days, covering ${money(soon.reduce((s,a)=>s+a.cost,0))}. Miss the window and the spend locks for another full term.</div>`:''}
+  <div class="card"><h2>Savings released by quarter</h2>
+    ${hbar(keys.map(k=>({k, v:waves[k].reduce((s,a)=>s+a.net,0)})), {w:80})}
+    <div class="mini" style="margin-top:6px">${keys.length} waves · ${PLAN.picked.length+PLAN.deferred.length} actions total.</div></div>
+  ${soon.length?`<div class="card"><h2>Notice deadlines inside 90 days</h2>
+    <table><thead><tr><th>Application</th><th>Vendor</th><th>Action</th><th class="num">Annual cost</th><th class="num">Days to notice</th><th>Contract ends</th></tr></thead><tbody>
+    ${soon.slice(0,18).map(a=>`<tr class="clk" data-id="${a.id}"><td>${esc(a.name)}</td><td class="mini">${esc(a.vendor)}</td>
+      <td><span class="pill p-${a.disp}">${a.disp}</span></td><td class="num">${money0(a.cost)}</td>
+      <td class="num" style="color:${a.daysToAction<30?'var(--bad)':'var(--warn)'}">${a.daysToAction}</td>
+      <td class="mini">${fmtDate(a.cend)}</td></tr>`).join('')}
+    </tbody></table></div>`:''}
+  ${keys.map(k=>{
+    const w = waves[k].sort((a,b)=>b.net-a.net);
+    return `<div class="card"><h2>${k} — ${w.length} actions, ${money(w.reduce((s,a)=>s+a.net,0))} released</h2>
+    <div class="scroll" style="max-height:260px"><table><thead><tr><th>Application</th><th>Action</th><th class="num">Net</th><th class="num">Disrupt</th><th class="num">Blast</th><th>Owner</th></tr></thead><tbody>
+    ${w.slice(0,25).map(a=>`<tr class="clk" data-id="${a.id}"><td>${esc(a.name)}</td><td><span class="pill p-${a.disp}">${a.disp}</span></td>
+      <td class="num">${money0(a.net)}</td><td class="num">${a.disruption}</td>
+      <td class="num"${a.blast>=8?' style="color:var(--bad)"':''}>${a.blast}</td><td class="mini">${esc(a.owner)}</td></tr>`).join('')}
+    </tbody></table></div>${w.length>25?`<div class="mini">Showing 25 of ${w.length}.</div>`:''}</div>`;
+  }).join('')}`;
+}
+
+/* ---------- data & method ---------- */
+function vData(){
+  const cols = RAW.cols || [];
+  return `<h1>Import &amp; method</h1>
+  <p class="sub">PortfolioIQ takes a thin inventory export and infers the rest. Drop in a CSV or Excel file and the engine re-runs end to end — column mapping, risk inference, dependency graph, scoring, optimisation.</p>
+  <div class="row r2">
+    <div class="card"><h2>Load your own inventory</h2>
+      <div style="border:2px dashed var(--border);border-radius:8px;padding:24px;text-align:center" id="drop">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:9px">Drop a .csv or .xlsx here, or</div>
+        <button class="pri" id="pick">Choose file</button>
+        <input type="file" id="file" accept=".csv,.xlsx" style="display:none">
+        <div class="mini" style="margin-top:9px">Parsed entirely in the browser. Nothing is uploaded anywhere.</div>
+      </div>
+      <div id="loadmsg" style="margin-top:10px"></div>
+      <div class="sec">Currently loaded</div>
+      <div class="mini">${esc(SOURCE)} — ${ASSETS.length} assets, ${cols.length} columns.</div>
+    </div>
+    <div class="card"><h2>Required vs inferred</h2>
+      <table><thead><tr><th>Field</th><th>Source</th></tr></thead><tbody>
+      ${[['Application name','required'],['Total annual cost','required'],['Business criticality','required'],
+         ['Vendor / category','recommended'],['Licences acquired / in use / active','recommended'],
+         ['Contract end date + notice period','recommended'],['Capabilities covered','recommended'],
+         ['Risk score','<b>inferred</b>'],['Security findings','<b>inferred</b>'],['Data classification','<b>inferred</b>'],
+         ['Regulatory scope','<b>inferred</b>'],['Dependencies / blast radius','<b>inferred</b>'],
+         ['AI governance status','<b>inferred</b>'],['Model provider','<b>vendor pack</b>'],['Capability fit','<b>vendor pack</b>']]
+        .map(([f,s])=>`<tr><td>${f}</td><td class="mini">${s}</td></tr>`).join('')}
+      </tbody></table>
+      <div class="mini" style="margin-top:8px">Anything missing is defaulted and flagged rather than rejected — real inventory exports are always incomplete.</div>
+    </div>
+  </div>
+  <div class="card"><h2>Method</h2>
+    <div class="row r2" style="margin:0">
+      <div><div class="sec">Value score</div><div class="mini" style="line-height:1.9">
+        adoption (utilisation × 26) + user scale (log-normalised × 16) + criticality (4–28)
+        + dependency centrality (blast ÷ max × 18) + vendor capability fit (8) + revenue-bearing (6)</div>
+        <div class="sec">Risk score</div><div class="mini" style="line-height:1.9">
+        vendor lifecycle (0–34) + open findings (6 each, cap 22) + data sensitivity (0–12, ×1.7 on AI egress)
+        + AI governance (0–22) + abandonment signal (decay × 14) + vendor concentration (6)</div></div>
+      <div><div class="sec">Disruption score</div><div class="mini" style="line-height:1.9">
+        criticality (4–38) + blast radius (× 28) + critical dependants (× 3) + user scale (× 18)
+        + regulated (9) + revenue-bearing (6)</div>
+        <div class="sec">Guardrails — never auto-retired</div><div class="mini" style="line-height:1.9">
+        Mission Critical · supports a revenue process · in SOX/GDPR scope with critical dependants · blast radius ≥ 12</div>
+        <div class="sec">Savings basis</div><div class="mini" style="line-height:1.9">
+        Retire = full cost − exit cost · Consolidate = 86% of cost − exit − migration · Replace = 28% of cost − half migration ·
+        Invest = 60% of idle-seat cost, recoverable at renewal</div></div>
+    </div>
+  </div>
+  <div class="card"><h2>Vendor intelligence pack</h2>
+    <div class="mini" style="margin-bottom:8px">Curated capability and lifecycle knowledge for ${Object.keys(VENDORS).length} vendors, used to decide which product survives an overlap group. In a pilot this is refreshed from vendor and analyst sources rather than shipped static.</div>
+    <div class="scroll" style="max-height:300px"><table><thead><tr><th>Vendor</th><th>Lifecycle</th><th>Recognised strength</th><th>Model provider</th><th class="num">Assets</th><th class="num">Spend</th></tr></thead><tbody>
+    ${Object.entries(VENDORS).map(([v,k])=>{const own=ASSETS.filter(a=>a.vendor===v);return `<tr><td>${esc(v)}</td>
+      <td class="mini" style="color:${LIFE_RISK[k.life]>=24?'var(--bad)':'inherit'}">${esc(k.life)}</td>
+      <td class="mini">${k.strong.length?k.strong.map(s=>`<span class="tag">${esc(s)}</span>`).join(''):'<span class="mini">—</span>'}</td>
+      <td class="mini">${esc(k.model||'—')}</td><td class="num">${own.length}</td>
+      <td class="num">${money(own.reduce((s,a)=>s+a.cost,0))}</td></tr>`}).join('')}
+    </tbody></table></div></div>`;
+}
+
+/* ============================================================================
+   7. drawer
+   ========================================================================== */
+function openAsset(id){
+  const a = BYID[id]; if (!a) return;
+  const vp = a.valueParts, rp = a.riskParts;
+  const bar = (lab, v, max, col) => `<tr><td style="border:0;padding:2px 8px 2px 0;font-size:11px">${lab}</td>
+    <td style="border:0;padding:2px 0"><div class="bar"><i style="width:${clamp(v/max*100,0,100).toFixed(0)}%;background:${col}"></i></div></td>
+    <td class="num mini" style="border:0;width:34px">${Math.round(v)}</td></tr>`;
+  const link = ids => ids.length ? ids.map(i => `<a data-go="${i}">${esc(BYID[i] ? BYID[i].name : i)}</a>`).join(', ') : '<span class="mini">none</span>';
+
+  $('drawer').innerHTML = `
+  <div class="dhead"><span class="x" id="dx">✕</span><b>${esc(a.name)}</b>
+    <span>${esc(a.id)} · ${esc(a.vendor)} · ${esc(a.type)} · ${esc(a.cat)}</span></div>
+  <div class="dbody">
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+      <span class="pill p-${a.disp}" style="font-size:12px;padding:4px 12px">${a.disp}</span>
+      <span class="mini">net saving <b style="color:var(--good)">${a.net?money0(a.net):'—'}</b></span>
+      ${a.locked?`<span class="mini" style="color:var(--bad)">protected</span>`:''}
+    </div>
+    <div class="why"><b>Why this recommendation.</b> ${esc(rationale(a))}.
+      ${a.locked?` Guardrails apply: ${esc(a.lockReasons.join('; '))} — this asset cannot be retired automatically.`:''}
+      ${a.disp==='Consolidate'&&a.group?` Target platform is <b>${esc(a.group.survivor.name)}</b> (${esc(a.group.survivor.vendor)}).`:''}
+      Withdrawal would affect <b>${a.blast}</b> downstream application${a.blast===1?'':'s'}${a.blastCrit?`, ${a.blastCrit} of them mission critical`:''}.</div>
+
+    <div class="sec">Commercials</div>
+    <dl class="dl">
+      <dt>Annual cost</dt><dd>${money0(a.cost)}</dd>
+      <dt>Total contract value</dt><dd>${money0(a.tcv)}</dd>
+      <dt>Cost per active user</dt><dd>${money0(a.cpau)}</dd>
+      <dt>Contract</dt><dd>${a.cstart||'—'} → ${fmtDate(a.cend)} (${a.years}y)</dd>
+      <dt>Auto renew</dt><dd>${a.auto?'yes':'no'} · ${a.notice}-day notice</dd>
+      <dt>Earliest action date</dt><dd>${fmtDate(a.actionDate)}</dd>
+      <dt>Exit + migration cost</dt><dd>${money0(a.exitCost + a.migrationCost)}</dd>
+    </dl>
+
+    <div class="sec">Licences &amp; adoption</div>
+    <dl class="dl">
+      <dt>Acquired</dt><dd>${a.acq.toLocaleString()}</dd>
+      <dt>Assigned</dt><dd>${a.used.toLocaleString()} (${pct(a.assignUtil)})</dd>
+      <dt>Active in 90 days</dt><dd>${a.act.toLocaleString()} (${pct(a.util)})</dd>
+      <dt>Idle seats</dt><dd style="color:${a.idleSeats?'var(--bad)':'inherit'}">${a.idleSeats.toLocaleString()} · ${money0(a.idleCost)}</dd>
+      <dt>Abandonment signal</dt><dd>${pct(a.decay)} of assigned seats went quiet</dd>
+    </dl>
+
+    <div class="sec">Value ${a.value}/100 — inferred</div>
+    <table>${bar('Adoption', vp.adoption, 26, '#0F6E56')}${bar('User scale', vp.scale, 16, '#0F6E56')}
+      ${bar('Criticality', vp.crit, 28, '#0F6E56')}${bar('Dependency centrality', vp.central, 18, '#0F6E56')}
+      ${bar('Vendor capability fit', vp.fit, 8, '#0F6E56')}${bar('Revenue-bearing', vp.rev, 6, '#0F6E56')}</table>
+
+    <div class="sec">Risk ${a.risk}/100 — inferred</div>
+    <table>${bar('Vendor lifecycle · '+a.vLife, rp.rLife, 34, '#993C1D')}${bar('Open findings · '+a.findings, rp.rSec, 22, '#993C1D')}
+      ${bar('Data sensitivity · '+a.dataClass, rp.rData, 21, '#993C1D')}${a.isAI?bar('AI governance · '+a.aiGov, rp.rGov, 22, '#993C1D'):''}
+      ${bar('Abandonment', rp.rDecay, 14, '#993C1D')}${bar('Vendor concentration', rp.rConc, 6, '#993C1D')}</table>
+
+    <div class="sec">Compliance &amp; classification — inferred</div>
+    <dl class="dl">
+      <dt>Regulatory scope</dt><dd>${esc(a.reg)}</dd>
+      <dt>Data classification</dt><dd>${esc(a.dataClass)}</dd>
+      <dt>Supports revenue process</dt><dd>${a.revenue?'yes':'no'}</dd>
+      ${a.isAI?`<dt>AI governance</dt><dd>${esc(a.aiGov)}</dd><dt>Model provider</dt><dd>${esc(a.aiModel)}</dd><dt>Data egress</dt><dd>${a.aiEgress?'flagged':'no'}</dd>`:''}
+    </dl>
+
+    <div class="sec">Dependencies — inferred</div>
+    <div class="deps"><b>Depends on (${a.dependsOn.length}):</b> ${link(a.dependsOn)}<br>
+      <b>Used by (${a.usedBy.length}):</b> ${link(a.usedBy)}<br>
+      <b>Blast radius:</b> ${a.blast} applications${a.blastCrit?` · ${a.blastCrit} mission critical`:''}<br>
+      <b>Disruption score:</b> ${a.disruption}/100</div>
+
+    ${a.group ? `<div class="sec">Overlap group — ${esc(a.group.cat)}</div>
+    <div class="deps">${a.isSurvivor?'<b style="color:var(--good)">★ Designated survivor</b> for this group.':
+      `Survivor is <a data-go="${a.group.survivor.id}">${esc(a.group.survivor.name)}</a>. This asset's capabilities are <b>${pct(a.overlap)}</b> covered by it.`}<br>
+      Capabilities covered: ${a.covered.map(c=>`<span class="tag">${esc(c)}</span>`).join('')}<br>
+      Group holds ${a.group.members.length} applications from ${a.group.vendors} vendors, ${money(a.group.spend)}.</div>`:''}
+
+    <div class="sec">Ownership</div>
+    <dl class="dl"><dt>Business owner</dt><dd>${esc(a.owner)}</dd><dt>Owning department</dt><dd>${esc(a.dept)}</dd>
+      <dt>Criticality</dt><dd>${esc(a.crit)}</dd></dl>
+  </div>`;
+  $('drawer').classList.add('on'); $('scrim').classList.add('on');
+  $('dx').onclick = closeDrawer;
+  $('drawer').querySelectorAll('[data-go]').forEach(e => e.onclick = () => openAsset(e.dataset.go));
+}
+function closeDrawer(){ $('drawer').classList.remove('on'); $('scrim').classList.remove('on'); }
+
+/* ============================================================================
+   8. wiring
+   ========================================================================== */
+function wire(){
+  document.querySelectorAll('tr.clk').forEach(r => r.onclick = () => openAsset(r.dataset.id));
+  document.querySelectorAll('th[data-sort]').forEach(t => t.onclick = () => {
+    const k = t.dataset.sort;
+    FILT.dir = FILT.sort === k ? -FILT.dir : -1; FILT.sort = k; render();
+  });
+  const bind = (id, key, ev) => { const e = $(id); if (e) e[ev || 'onchange'] = () => { FILT[key] = e.value; render(); }; };
+  bind('fcat','cat'); bind('ftype','type'); bind('fdisp','disp');
+  const fq = $('fq');
+  if (fq) fq.oninput = () => { FILT.q = fq.value; const p = fq.selectionStart; render(); const n = $('fq'); if (n){ n.focus(); n.setSelectionRange(p, p); } };
+
+  [['sTarget','target','lTarget','%'],['sTol','tolerance','lTol',''],['sHor','horizon','lHor',' months']].forEach(([sid,key,lid,suf]) => {
+    const s = $(sid); if (!s) return;
+    s.oninput = () => { $(lid).textContent = s.value + suf; };
+    s.onchange = () => { SC[key] = +s.value; buildScenario(); render(); };
+  });
+  const cp = $('cProtect');
+  if (cp) cp.onchange = () => { SC.protect = cp.checked; buildScenario(); render(); };
+
+  const f = $('file'), pick = $('pick'), drop = $('drop');
+  if (pick) pick.onclick = () => f.click();
+  if (f) f.onchange = () => f.files[0] && loadFile(f.files[0]);
+  if (drop){
+    drop.ondragover = e => { e.preventDefault(); drop.style.borderColor = 'var(--verdigris)'; };
+    drop.ondragleave = () => drop.style.borderColor = 'var(--border)';
+    drop.ondrop = e => { e.preventDefault(); drop.style.borderColor = 'var(--border)'; e.dataTransfer.files[0] && loadFile(e.dataTransfer.files[0]); };
+  }
+}
+$('scrim').onclick = closeDrawer;
+document.addEventListener('keydown', e => e.key === 'Escape' && closeDrawer());
+$('chipExport').onclick = exportCSV;
+
+function exportCSV(){
+  const head = ['Application ID','Application Name','Vendor','Category','Asset Type','Business Owner','Annual Cost',
+    'Licences Acquired','Active 90d','Utilisation','Value','Risk','Disruption','Blast Radius','Overlap %',
+    'Recommendation','Rationale','Gross Saving','Net Saving','Earliest Action Date','In Plan','Guardrails'];
+  const inPlan = new Set(PLAN.picked.map(a=>a.id));
+  const q = v => '"' + String(v == null ? '' : v).replace(/"/g,'""') + '"';
+  const body = ASSETS.map(a => [a.id,a.name,a.vendor,a.cat,a.type,a.owner,Math.round(a.cost),a.acq,a.act,
+    (a.util*100).toFixed(0)+'%',a.value,a.risk,a.disruption,a.blast,a.isSurvivor?'survivor':(a.overlap*100).toFixed(0)+'%',
+    a.disp,rationale(a),a.gross,a.net,fmtDate(a.actionDate),inPlan.has(a.id)?'yes':'no',a.lockReasons.join('; ')].map(q).join(','));
+  const blob = new Blob([[head.map(q).join(',')].concat(body).join('\r\n')], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = 'portfolioiq-actions.csv'; a.click(); URL.revokeObjectURL(url);
+}
+
+/* ============================================================================
+   9. file ingest — CSV and XLSX, no external libraries
+   ========================================================================== */
+function parseCSV(text){
+  const rows = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < text.length; i++){
+    const c = text[i];
+    if (q){
+      if (c === '"'){ if (text[i+1] === '"'){ cell += '"'; i++; } else q = false; }
+      else cell += c;
+    } else if (c === '"') q = true;
+    else if (c === ','){ row.push(cell); cell = ''; }
+    else if (c === '\n'){ row.push(cell); rows.push(row); row = []; cell = ''; }
+    else if (c !== '\r') cell += c;
+  }
+  if (cell || row.length){ row.push(cell); rows.push(row); }
+  return rows.filter(r => r.some(v => String(v).trim()));
+}
+
+/* Minimal xlsx reader: unzip with DecompressionStream, then parse the XML parts. */
+async function parseXLSX(buf){
+  const files = await unzip(new Uint8Array(buf));
+  const dec = new TextDecoder();
+  const shared = [];
+  if (files['xl/sharedStrings.xml']){
+    const doc = new DOMParser().parseFromString(dec.decode(files['xl/sharedStrings.xml']), 'application/xml');
+    doc.querySelectorAll('si').forEach(si => shared.push([...si.querySelectorAll('t')].map(t => t.textContent).join('')));
+  }
+  const name = Object.keys(files).find(k => /^xl\/worksheets\/sheet1\.xml$/.test(k))
+            || Object.keys(files).find(k => /^xl\/worksheets\/.*\.xml$/.test(k));
+  if (!name) throw new Error('No worksheet found in workbook.');
+  const doc = new DOMParser().parseFromString(dec.decode(files[name]), 'application/xml');
+  const colnum = ref => { let n = 0; for (const ch of (ref||'A').match(/[A-Z]+/)[0]) n = n*26 + (ch.charCodeAt(0)-64); return n-1; };
+  const rows = [];
+  doc.querySelectorAll('row').forEach(r => {
+    const cells = {}; let max = -1;
+    r.querySelectorAll('c').forEach(c => {
+      const i = colnum(c.getAttribute('r')); max = Math.max(max, i);
+      const t = c.getAttribute('t'), v = c.querySelector('v'), is = c.querySelector('is');
+      cells[i] = t === 's' && v ? (shared[+v.textContent] || '')
+               : is ? [...is.querySelectorAll('t')].map(x => x.textContent).join('')
+               : v ? v.textContent : '';
+    });
+    const out = []; for (let i = 0; i <= max; i++) out.push(cells[i] || '');
+    if (out.some(v => String(v).trim())) rows.push(out);
+  });
+  return rows;
+}
+
+async function unzip(bytes){
+  const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  /* locate end-of-central-directory */
+  let eocd = -1;
+  for (let i = bytes.length - 22; i >= 0 && i > bytes.length - 66000; i--)
+    if (dv.getUint32(i, true) === 0x06054b50){ eocd = i; break; }
+  if (eocd < 0) throw new Error('Not a valid .xlsx file.');
+  const count = dv.getUint16(eocd + 10, true);
+  let p = dv.getUint32(eocd + 16, true);
+  const out = {};
+  for (let n = 0; n < count; n++){
+    if (dv.getUint32(p, true) !== 0x02014b50) break;
+    const method = dv.getUint16(p + 10, true);
+    const csize  = dv.getUint32(p + 20, true);
+    const nlen   = dv.getUint16(p + 28, true);
+    const elen   = dv.getUint16(p + 30, true);
+    const clen   = dv.getUint16(p + 32, true);
+    const lho    = dv.getUint32(p + 42, true);
+    const name   = new TextDecoder().decode(bytes.subarray(p + 46, p + 46 + nlen));
+    const lnlen  = dv.getUint16(lho + 26, true);
+    const lelen  = dv.getUint16(lho + 28, true);
+    const start  = lho + 30 + lnlen + lelen;
+    const raw    = bytes.subarray(start, start + csize);
+    if (method === 0) out[name] = raw;
+    else if (method === 8){
+      const ds = new DecompressionStream('deflate-raw');
+      out[name] = new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(ds)).arrayBuffer());
+    }
+    p += 46 + nlen + elen + clen;
+  }
+  return out;
+}
+
+async function loadFile(file){
+  const msg = $('loadmsg');
+  const say = (cls, html) => { if (msg) msg.innerHTML = `<div class="${cls}" style="margin:0">${html}</div>`; };
+  try {
+    say('infobox', 'Reading ' + esc(file.name) + '…');
+    let rows;
+    if (/\.xlsx$/i.test(file.name)){
+      if (typeof DecompressionStream === 'undefined')
+        throw new Error('This browser cannot unzip .xlsx — save as CSV and retry.');
+      rows = await parseXLSX(await file.arrayBuffer());
+    } else {
+      rows = parseCSV(await file.text());
+    }
+    if (rows.length < 2) throw new Error('File has no data rows.');
+    const before = ASSETS.length;
+    ingest({asOf: RAW.asOf, cols: rows[0], rows: rows.slice(1)}, file.name);
+    render();
+    const m = mapColumns(rows[0]);
+    const mapped = Object.keys(m).length, unmapped = rows[0].length - mapped;
+    say('okbox', `Loaded <b>${esc(file.name)}</b> — ${ASSETS.length} assets (was ${before}). ` +
+      `${mapped} columns mapped${unmapped > 0 ? `, ${unmapped} ignored` : ''}. ` +
+      `Risk, dependencies and governance re-inferred; ${ASSETS.reduce((s,a)=>s+a.dependsOn.length,0)} edges built.`);
+  } catch (e){
+    say('warnbox', '<b>Could not load that file.</b> ' + esc(e.message));
+  }
+}
+
+/* ---------- go ---------- */
+ingest(RAW, 'bundled sample — Hackathon Mock Data (600 applications)');
+render();
+</script>
