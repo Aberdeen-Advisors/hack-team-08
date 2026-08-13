@@ -1,6 +1,6 @@
 # Path to pilot
 
-What it takes to run PortfolioIQ against a real client estate rather than a sample.
+What it takes to run AppWise Insights against a real client estate rather than a sample.
 
 ---
 
@@ -14,7 +14,7 @@ platform → hand-merge in Excel → email business owners chasing criticality r
 steering committee about what is safe to cut → six to ten weeks to a list that is already stale and
 that nobody can fully defend.
 
-PortfolioIQ compresses the analysis to an afternoon and makes the output auditable: every
+AppWise Insights compresses the analysis to an afternoon and makes the output auditable: every
 recommendation carries its inputs, so the conversation moves from "why is my system on this list" to
 "here is the evidence, and here is what would change it".
 
@@ -25,7 +25,7 @@ recommendation carries its inputs, so the conversation moves from "why is my sys
 One business unit or one capability domain, 60–120 applications, 8 weeks.
 
 Narrow beats broad. A capability domain (say, all of Collaboration and Customer Service) produces a
-real consolidation decision inside the pilot window. A thin slice across all 600 produces
+real consolidation decision inside the pilot window. A thin slice across all 800 produces
 observations nobody acts on.
 
 | Week | Activity |

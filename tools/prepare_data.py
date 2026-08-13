@@ -1,5 +1,5 @@
 """
-PortfolioIQ - data preparation.
+AppWise Insights - data preparation.
 
 Reads the source application inventory (the Hackathon Mock Data workbook) and adds
 ONLY the three enrichments agreed with the business:
@@ -21,6 +21,7 @@ Outputs: data/portfolio_enriched.csv, data/portfolio_enriched.xlsx, data/portfol
 Deterministic: seeded, so reruns reproduce byte-identical output.
 """
 
+import argparse
 import csv
 import json
 import os
@@ -152,6 +153,80 @@ def capability_subset(tokens, category, cat_tokens, rng):
     return covered
 
 
+NAME_VARIANTS = ['One', 'Suite', 'Edge', 'Pro', 'Core', 'Cloud', 'Hub', '360']
+
+
+def extend_portfolio(rows, idx, count, rng):
+    """
+    Synthesise additional applications so the estate can be sized past the 600 rows
+    the source workbook supplies.
+
+    Every field is drawn from the SOURCE distributions rather than invented: the
+    category mix, the vendors that genuinely appear in each category, the owner and
+    department pools, the criticality and contract-term mixes, and per-category cost
+    and licence ranges. A new row is therefore statistically indistinguishable from
+    the originals, which matters because the whole portfolio is scored together -
+    additions drawn from thin air would distort every percentile in the engine.
+
+    The 600 source rows are never modified. New rows continue the numbering.
+    """
+    cat_i, ven_i = idx['Category'], idx['Vendor']
+    cost_i, tcv_i = idx['Total Annual Cost'], idx['Total Contract Value']
+    acq_i, use_i = idx['Licenses Acquired'], idx['Licenses in Use']
+    a90_i, crit_i = idx['Licenses in Use ( last 90 Days)'], idx['Business Criticality']
+    yrs_i, cap_i = idx['Contract Duration in Years'], idx['Business Capability']
+    own_i, dept_i = idx['Business Owner'], idx['Dept Owner']
+    name_i = idx['Application Name']
+
+    by_cat = {}
+    for r in rows:
+        by_cat.setdefault(r[cat_i], []).append(r)
+
+    cats = [r[cat_i] for r in rows]
+    owners = sorted({r[own_i] for r in rows})
+    depts = sorted({r[dept_i] for r in rows})
+    crits = [r[crit_i] for r in rows]
+    terms = [r[yrs_i] for r in rows]
+
+    out = []
+    for n in range(count):
+        cat = rng.choice(cats)
+        peers = by_cat[cat]
+        shape = rng.choice(peers)                       # a same-category row to borrow scale from
+
+        num = len(rows) + n + 1
+        name = '%s %s %03d' % (cat, rng.choice(NAME_VARIANTS), num)
+        vendor = rng.choice([p[ven_i] for p in peers])  # only vendors real in this category
+
+        years = int(rng.choice(terms))
+        cost = int(float(shape[cost_i]) * rng.uniform(0.55, 1.75) / 100) * 100
+        cost = max(11000, cost)
+        tcv = int(cost * years * rng.uniform(0.94, 1.06) / 100) * 100
+
+        acq = max(12, int(float(shape[acq_i]) * rng.uniform(0.5, 1.8)))
+        src_acq = max(1.0, float(shape[acq_i]))
+        use = int(acq * min(1.0, float(shape[use_i]) / src_acq * rng.uniform(0.8, 1.2)))
+        a90_ratio = float(shape[a90_i]) / max(1.0, float(shape[use_i])) if float(shape[use_i]) else 0.0
+        a90 = int(use * min(1.0, a90_ratio * rng.uniform(0.8, 1.15)))
+
+        row = [''] * len(rows[0])
+        row[name_i] = name
+        row[ven_i] = vendor
+        row[cat_i] = cat
+        row[cap_i] = shape[cap_i]                       # the category's canonical token list
+        row[own_i] = rng.choice(owners)
+        row[dept_i] = rng.choice(depts)
+        row[yrs_i] = str(years)
+        row[cost_i] = str(cost)
+        row[tcv_i] = str(tcv)
+        row[acq_i] = str(acq)
+        row[use_i] = str(use)
+        row[a90_i] = str(a90)
+        row[crit_i] = rng.choice(crits)
+        out.append(row)
+    return out
+
+
 def add_years(d, years):
     try:
         return d.replace(year=d.year + years)
@@ -164,9 +239,21 @@ def add_years(d, years):
 # --------------------------------------------------------------------------
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--total', type=int, default=800,
+                    help='target portfolio size; rows beyond the source are synthesised '
+                         'from the source distributions (default 800)')
+    args = ap.parse_args()
+
     rng = random.Random(SEED)
     hdr, rows = read_xlsx(SRC)
     idx = {h: i for i, h in enumerate(hdr)}
+    source_count = len(rows)
+
+    if args.total > source_count:
+        rows = rows + extend_portfolio(rows, idx, args.total - source_count, rng)
+    elif args.total < source_count:
+        rows = rows[:args.total]
 
     cat_tokens = {}
     for r in rows:
@@ -226,7 +313,7 @@ def main():
         json.dump({'asOf': ASOF.isoformat(), 'cols': out_hdr, 'rows': packed},
                   f, separators=(',', ':'))
 
-    print('rows      : %d' % len(out))
+    print('rows      : %d (%d source + %d synthesised)' % (len(out), source_count, len(out) - source_count))
     print('columns   : %d (13 source + %d added)' % (len(out_hdr), len(out_hdr) - 13))
     print('spend     : $%s' % f"{sum(float(r[out_hdr.index('Total Annual Cost')]) for r in out):,.0f}")
     types = {}

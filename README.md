@@ -1,15 +1,13 @@
-# PortfolioIQ
+# AppWise Insights by Aberdeen Advisors
 
-**Technology portfolio rationalization for a 600-application estate.**
-An Aberdeen Labs asset.
+**An AI-powered application portfolio rationalization and optimization platform.**
 
-A global company has 600 applications, dozens of SaaS subscriptions and a growing collection of AI
+A global company has 800 applications, dozens of SaaS subscriptions and a growing collection of AI
 tools and agents with overlapping capabilities. The CIO must cut technology spend by 15% without
-disrupting critical business operations. PortfolioIQ takes the inventory export they already have,
+disrupting critical business operations. AppWise Insights takes the inventory export they already have,
 infers what it doesn't contain, and produces a defensible action list.
 
-Against the bundled sample: **$753.3M** of annual spend, a **15.0% reduction ($113.1M)** reached in
-20 actions, **zero guardrail violations**.
+Against the bundled sample: **$1.04B** of annual spend, a **15.0% reduction ($156.2M)** reached in 31 actions, **zero guardrail violations**.
 
 ---
 
@@ -31,7 +29,7 @@ Every portfolio tool on the market wants a rich inventory: cost, usage, risk rat
 maps, contract metadata, compliance scope. Nobody has one. The data-collection project becomes the
 programme, and eighteen months later there are still no decisions.
 
-PortfolioIQ inverts that. It asks for the thin export you can actually produce — name, vendor,
+AppWise Insights inverts that. It asks for the thin export you can actually produce — name, vendor,
 category, cost, licences, criticality — and **infers the rest at ingest time**:
 
 | Input (from your export) | Inferred by the engine |
@@ -55,10 +53,12 @@ the asset drawer shows the full breakdown so a CIO can defend each line to a bus
    member on how much of its function the survivor already provides.
 2. **Assesses cost, usage, risk and dependencies.** Four scored dimensions, each decomposed into
    named drivers rather than a black-box rating.
-3. **Recommends Invest, Consolidate, Replace or Retire** for all 600 assets, with a rationale.
-4. **Hits the 15% target without breaking anything.** The optimiser ranks candidate actions by net
-   saving per unit of disruption and takes them in order, subject to hard guardrails and to when
-   each contract's notice window actually opens.
+3. **Recommends Invest, Consolidate, Replace or Retire** for all 800 assets, with a rationale.
+4. **Lands on the target without breaking anything.** The optimiser assesses the whole estate — all
+   746 candidates, every time — ranks them on savings value, earliest action date and lowest
+   disruption, then fills to the requested percentage rather than past it. Every integer target from
+   5% to 35% lands within 0.00pp, subject to hard guardrails and to when each contract's notice
+   window actually opens.
 5. **Separates real savings from theoretical ones.** A saving you cannot reach until 2029 is
    reported as deferred, not counted toward this year's target.
 
@@ -66,7 +66,7 @@ the asset drawer shows the full breakdown so a CIO can defend each line to a bus
 
 An asset is protected — and can never be auto-retired — if it is Mission Critical, supports a
 revenue process, sits in SOX or GDPR scope with critical dependants, or has a blast radius of 12+
-applications. 176 of the 600 assets are protected. The smoke test asserts zero violations across
+applications. 226 of the 800 assets are protected. The smoke test asserts zero violations across
 every scenario in the sweep.
 
 ---
@@ -75,19 +75,18 @@ every scenario in the sweep.
 
 | Group | Tab | Content |
 |---|---|---|
-| Overview | Executive summary | KPIs, savings waterfall to target, disposition mix, top actions |
-| | Technology spend | By vendor, category, type, department, criticality; worst cost per active user |
-| Analyze | Redundancy | Overlap groups, survivor rationale, per-group consolidation savings |
-| | Portfolio explorer | Value/risk quadrant, filterable grid of all 600 |
-| | Risk & dependencies | Lifecycle exposure, regulated spend, blast radius, risk drivers |
-| | AI & agent sprawl | 78 AI assets, duplicate model providers, 45 shadow deployments, egress flags |
-| Act | Recommendations | Every asset, its disposition, rationale, saving and owner |
+| Overview | Executive summary | Five KPIs, an inline target stepper, top actions, clickable disposition mix |
+| | Technology spend | Vendor search with per-vendor drill-down; a clickable idle-seat card that shows the applications behind the $480.8M |
+| Analyze | Redundancy | Two-level capability filter, overlap groups, per-application reasoning |
+| | AI & agents analysis | 99 AI assets split into tools and agents, duplicity scoring, capability comparison, inferred token usage |
+| Act | Recommendations | Clickable disposition KPIs that filter the table; every asset with its rationale, saving and owner |
 | | Savings scenarios | Live sliders for target, disruption tolerance and horizon |
 | | Roadmap & renewals | Waves by quarter, notice deadlines inside 90 days |
-| Data | Import & method | CSV/XLSX upload, scoring formulas, vendor intelligence pack |
+| Data | Import | CSV/XLSX upload, scoring formulas, vendor intelligence pack |
 
-Any row opens an asset drawer: full record, dependencies both directions, the value and risk
-breakdown bar by bar, and the recommendation with its reasoning.
+Any row opens an asset drawer, which leads with risk and dependencies at a glance — risk score,
+blast radius, disruption, guardrail status — then the full record, dependencies in both directions,
+the value and risk breakdown bar by bar, and the recommendation with its reasoning.
 
 ---
 
@@ -110,13 +109,13 @@ inlined 400 KB dependency, no network call. Files never leave the browser.
 index.html                     the built application - this is the deliverable
 src/index.template.html        source template (engine + views)
 src/fonts.css                  embedded Poppins faces, Aberdeen brand
-data/portfolio_enriched.csv    600 assets, 20 columns
+data/portfolio_enriched.csv    800 assets, 20 columns
 data/portfolio_enriched.xlsx   same, Excel-native
 data/portfolio.json            packed payload inlined at build time
 data/SCHEMA.md                 field dictionary and the input contract
 tools/prepare_data.py          source workbook -> enriched dataset
 tools/build_app.py             template + fonts + data -> index.html
-tools/smoke_test.js            28 assertions over the engine, headless
+tools/smoke_test.js            104 assertions over the engine and views, headless
 docs/METHODOLOGY.md            scoring formulas, weights, guardrails
 docs/PATH-TO-PILOT.md          what a real deployment requires
 ```
@@ -130,11 +129,19 @@ every row inside a category carried identical capability tokens, which made the 
 of Category and useless for overlap detection. Risk and dependencies are deliberately **not** added
 to the data; they are the tool's job.
 
+The estate is then sized to **800** applications. The 600 source rows are carried through
+unmodified — their subtotal, $753,330,500, is asserted by test — and the additional 200 are
+synthesised by `extend_portfolio()` drawing on the source's own distributions: the category mix, the
+vendors that genuinely appear in each category, the owner, department, criticality and contract-term
+pools, and per-category cost and licence ranges. Additions invented from thin air would distort
+every percentile the engine computes. Run `py tools/prepare_data.py --total 600` for the source
+estate alone.
+
 ---
 
 ## Testing
 
-`node tools/smoke_test.js` loads the built `index.html`, stubs a minimal DOM, and runs 28 assertions
+`node tools/smoke_test.js` loads the built `index.html`, stubs a minimal DOM, and runs 104 assertions
 against the engine — ingest integrity, score bounds, graph symmetry and **acyclicity**, guardrail
 enforcement, optimiser constraint satisfaction, determinism across reruns — then sweeps six
 scenarios checking the guardrails hold in each.
@@ -153,6 +160,8 @@ a core identity platform genuinely does underpin most of the estate).
   observed facts. They are good enough to rank and triage, not to sign a termination notice against.
   See `docs/PATH-TO-PILOT.md` for what replaces them.
 - The vendor intelligence pack covers the 25 vendors in the sample and ships static.
+- Token usage for AI assets is **inferred** from adoption and workload shape, not metered. Real
+  figures come from vendor billing APIs; see `docs/PATH-TO-PILOT.md`.
 - Savings ratios (86% recovery on consolidation, 28% on replacement, 60% of idle-seat cost) are
   planning assumptions, stated in `docs/METHODOLOGY.md` and adjustable in one place.
 - No persistence, no accounts, no multi-tenancy — state lives in the page.

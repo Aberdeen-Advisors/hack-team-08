@@ -1,4 +1,4 @@
-# PortfolioIQ — working notes
+# AppWise Insights — working notes
 
 Read this before changing anything.
 

@@ -1,6 +1,6 @@
 # Methodology
 
-Every number PortfolioIQ shows is reproducible from the formulas below. Nothing is a black box, and
+Every number AppWise Insights shows is reproducible from the formulas below. Nothing is a black box, and
 nothing inferred is presented as observed. This document is the reference a CIO's team would
 challenge line by line before acting.
 
@@ -59,7 +59,7 @@ An AI asset is flagged **Shadow / Unsanctioned** if it sits outside the AI & Aut
 (procured by a department, never through architecture) or shows near-zero measured adoption. Data
 egress is flagged where a non-Internal data classification meets a non-Approved governance status.
 
-45 of the 78 AI assets in the sample are unsanctioned.
+45 of the 99 AI assets in the sample are unsanctioned.
 
 ### 2.5 Dependency graph
 
@@ -138,6 +138,33 @@ credible platform for the capability is not a survivor — it is the next migrat
 Every other member's **overlap** is the share of its own capabilities the survivor already provides.
 At 60%+ it becomes a consolidation candidate.
 
+### The redundancy workspace
+
+The Redundancy view filters on two levels — **category** (16, matching the engine's own grouping)
+and **capability** (48 fine-grained functions). The second level matters because **43 of the 48
+capabilities are delivered from more than one category**: `Asset Management` alone is provided by 37
+applications across Cybersecurity, Engineering, IT Operations and Industry Operations, worth $59.7M.
+A category-by-category review cannot see that at all.
+
+When a selection spans categories, the view computes its **reference product** from the filtered set
+using the same `fitScore` formula, and says so on screen — the Action pill still reflects the
+engine's portfolio-level grouping, and pretending otherwise would be dishonest.
+
+The reference product is still marked with a ★ in the table, and its Reasoning cell names it as the
+reference — so the comparison the other rows are measured against stays visible without a chart.
+
+### Reasoning column
+
+`reasoning(a, ref)` produces two to three sentences in a fixed order: what the application covers
+relative to the reference, the dominant evidence behind the action, and what acting releases or what
+blocks it. It takes the reference as an argument so a filtered view always describes the comparison
+the reader is actually looking at, rather than the portfolio-level survivor.
+
+Two constraints are enforced by test: the output must be 2–3 sentences with no leaked `undefined`,
+and the phrase *"would retire on the evidence"* may only appear where the retire test genuinely
+passes (`value < 34` and `util < 35%`). An earlier build asserted it of a 66%-utilised, value-75
+asset, which is exactly the kind of confident falsehood that discredits the whole tool.
+
 ---
 
 ## 5. Disposition
@@ -153,7 +180,7 @@ Evaluated in order:
 A protected asset that lands on Retire is promoted to Replace if its risk is high, otherwise Invest.
 This is a hard rule, not a preference.
 
-Sample result: Consolidate 333, Invest 147, Retire 71, Replace 49.
+Sample result: Consolidate 483, Invest 170, Retire 91, Replace 56.
 
 ### Guardrails
 
@@ -164,7 +191,7 @@ Protected — never auto-retired:
 - in SOX/GDPR scope **and** has mission-critical dependants
 - blast radius ≥ 12 applications
 
-176 of 600 assets are protected in the sample.
+226 of 800 assets are protected in the sample.
 
 ---
 
@@ -188,31 +215,61 @@ calibrate against a client's actual migration history, and they live in one plac
 
 ## 7. Optimiser
 
-Greedy and explainable, not optimal. Candidates are ranked by `net saving ÷ max(6, disruption)` and
-taken in order until the target is met, subject to:
+### Sequencing priority
 
-- guardrails (when enforcement is on)
-- disruption score ≤ tolerance
-- the contract notice window opening inside the horizon
+Every candidate carries a composite priority combining the three criteria a CIO actually sequences
+on. A tie-break sort would not work — net saving is continuous, so exact ties are vanishingly rare
+and the second and third keys would never fire. Each is normalised to 0–1 so all three bear:
 
-Anything whose window falls outside the horizon is reported as **deferred** — real savings,
-contractually out of reach — rather than silently dropped. Anything blocked by a guardrail or the
-tolerance is reported as **excluded**, with the reason.
+```
+priority = 0.50 × (net ÷ maxNet)                  highest savings value
+         + 0.30 × (1 − daysToAction ÷ maxDays)    earliest action date
+         + 0.20 × (1 − disruption ÷ 100)          lowest disruption
+```
+
+Weights live in one constant (`PRIORITY`). The older `efficiency` ratio is retained in the CSV
+export as a diagnostic but no longer drives selection.
+
+### Selection: two passes over the whole estate
+
+1. **Classify** every candidate — guardrail, above ceiling, deferred beyond the horizon, or eligible.
+2. **Fit pass** — walk the entire eligible list in priority order, taking any action whose saving
+   still fits inside the remaining gap. Nothing breaks the loop, so all 746 candidates are assessed.
+3. **Close pass** — if still short, add the *smallest* action that crosses the line, not the
+   highest-priority one, so the plan lands on the target rather than past it.
+
+The earlier version stopped the moment the running total crossed the target. That evaluated only 23
+of 746 candidates at a 15% target, overshot by up to 2.4 points, and made targets of 16%, 17% and
+18% produce one identical plan — the stepper looked broken across that range.
+
+### Why an asset is not in the plan
+
+| Code | Meaning |
+|---|---|
+| `guardrail` | Mission critical, revenue-bearing, regulated with critical dependants, or blast radius ≥ 12 |
+| `ceiling` | Disruption above the internal tolerance |
+| `deferred` | Contract notice window falls outside the horizon |
+| `surplus` | Evaluated and valid, but the target was already met — held in reserve |
+
+`surplus` is the largest group by far, and naming it honestly matters: these are validated actions
+in reserve, not rejected ones.
 
 A knapsack solver would find a marginally better set. It would also be impossible to defend in a
 steering committee, which is the wrong trade for this decision.
 
 ### Verified behaviour
 
-| Target | Horizon | Tolerance | Achieved | Savings | Actions | Guardrails |
-|---|---|---|---|---|---|---|
-| 10% | 12mo | 50 | 10.5% | $79.0M | 13 | held |
-| 15% | 24mo | 62 | 15.0% | $113.1M | 20 | held |
-| 20% | 24mo | 62 | 20.1% | $151.5M | 30 | held |
-| 15% | 48mo | 62 | 15.1% | $113.5M | 18 | held |
-| 25% | 48mo | 85 | 25.4% | $191.2M | 41 | held |
-| 30% | 12mo | 40 | 30.0% | $226.1M | 90 | held |
+Measured across every integer target from 5% to 35%, all 746 candidates evaluated each time:
 
-Note the shape of the last row: a 30% target under a tight 12-month horizon and low disruption
-tolerance is still reachable, but it takes 90 actions instead of 20 — the plan fragments into many
-small, safe moves rather than a few large ones. That is the trade-off the sliders exist to expose.
+| Target | Achieved | Overshoot | Savings | Actions |
+|---|---|---|---|---|
+| 5% | 5.0% | 0.00pp | $37.7M | 11 |
+| 10% | 10.0% | 0.00pp | $75.3M | 14 |
+| 15% | 15.0% | 0.00pp | $113.0M | 21 |
+| 16% | 16.0% | 0.00pp | $120.5M | 23 |
+| 25% | 25.0% | 0.00pp | $188.3M | 50 |
+| 35% | 35.0% | 0.00pp | $263.7M | 134 |
+
+31 distinct plans across 31 targets — no two collapse onto the same set. Savings rise strictly with
+the target. Action count rises with it too, though it may dip by one where a larger action displaces
+two smaller ones; that is normal for a fit-based selection and the savings figure stays exact.

@@ -1,6 +1,6 @@
 # Input schema
 
-The contract between a client's inventory export and PortfolioIQ.
+The contract between a client's inventory export and AppWise Insights.
 
 Three tiers. **Required** is the minimum to produce any output. **Recommended** unlocks the risk,
 contract and dependency engines. **Optional** sharpens scoring. Missing columns are defaulted and
@@ -54,7 +54,7 @@ tool says so.
 ## Not accepted as input — inferred by the tool
 
 These are deliberately **not** in the schema. Clients do not have them, and waiting for them is why
-rationalization programmes stall. PortfolioIQ derives them at ingest; see
+rationalization programmes stall. AppWise Insights derives them at ingest; see
 [`../docs/METHODOLOGY.md`](../docs/METHODOLOGY.md).
 
 Risk score and its drivers · open security findings · data classification · regulatory scope ·
@@ -66,7 +66,7 @@ gross and net savings · earliest action date.
 
 ## Bundled sample
 
-`portfolio_enriched.csv` / `.xlsx` — 600 applications, 20 columns, $753,330,500 annual spend.
+`portfolio_enriched.csv` / `.xlsx` — 800 applications, 20 columns, $1,041,530,100 annual spend.
 
 Derived from `Hackathon Mock Data - Copilot.xlsx` (600 rows × 13 columns) by
 `tools/prepare_data.py`, which adds exactly four things:
@@ -83,3 +83,7 @@ interchangeable, so the survivor decision collapses onto price. Assigning each a
 it actually covers turns overlap into a percentage and makes consolidation defensible.
 
 All 13 original columns are preserved unchanged.
+
+The estate is sized to 800 applications: the 600 source rows unmodified, plus 200 synthesised from
+the source's own distributions by `extend_portfolio()`. Use `--total 600` to build the source
+estate alone.
