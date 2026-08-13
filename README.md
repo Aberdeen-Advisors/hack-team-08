@@ -1,6 +1,7 @@
 # AppWise Insights by Aberdeen Advisors
 
 **An AI-powered application portfolio rationalization and optimization platform.**
+**Live app:** https://hack-team-08.vercel.app/
 
 A global company has 800 applications, dozens of SaaS subscriptions and a growing collection of AI
 tools and agents with overlapping capabilities. The CIO must cut technology spend by 15% without
